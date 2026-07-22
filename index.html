@@ -3,607 +3,874 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나만의 커스텀 플래너</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <title>PLANA (플래나)</title>
+    <!-- 웹 폰트 로드 -->
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Gothic:wght@400;700&family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #f7f9fa;
+            --text-color: #000000;
+            --border-color: #000000;
+            --pattern-bg: none;
+            --font-family: 'Nanum Gothic', sans-serif;
+        }
+
         * {
             box-sizing: border-box;
-            font-family: 'Gowun Dodum', sans-serif;
-        }
-        body {
-            background-color: #e6f0ed;
-            background-image: radial-gradient(#b0c4bc 1.5px, transparent 1.5px);
-            background-size: 20px 20px;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: var(--font-family);
+            color: var(--text-color);
+        }
+
+        body {
+            background-color: #e5e5e5;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
-        /* 메인 컨테이너: 원본 배치 유지 + 확실한 둥근 모서리 */
-        .main-container {
+
+        /* 앱 전체 둥근 테두리 및 컨테이너 */
+        #app {
             width: 100%;
-            max-width: 950px;
-            background: #ffffff;
-            border: 2px solid #333333;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            max-width: 430px;
+            height: 90vh;
+            max-height: 850px;
+            background-color: var(--bg-color);
+            background-image: var(--pattern-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        /* 상단 상태바 */
-        .status-bar {
+
+        /* 상단 1/4 영역 */
+        .header-section {
+            height: 25%;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px 16px;
+            position: relative;
+        }
+
+        .top-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 12px;
-            margin-bottom: 15px;
-            font-size: 13px;
+            align-items: flex-start;
         }
+
+        .user-info {
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
         .pou-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
         }
-        /* 포우 아바타 실루엣 (이모지 포함 고유 형태) */
-        .pou-silhouette {
-            width: 40px;
-            height: 50px;
-            border: 2px solid #333;
-            border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+
+        /* 둥근 삼각형 포우 아바타 */
+        .pou-avatar {
+            width: 45px;
+            height: 40px;
+            background-color: #8B5A2B; /* 기본 갈색 */
+            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+            border-radius: 12px 12px 20px 20px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 18px;
-            transition: background 0.3s ease;
+            margin-top: 2px;
+            transition: background-color 0.3s;
         }
-        /* 5단계 색상 및 광택 질감 */
-        .pou-level-0 { background: #1a1a1a; color: #fff; } /* 검정 */
-        .pou-level-1 { background: #888888; color: #fff; } /* 회색 */
-        .pou-level-2 { background: #ffffff; color: #333; } /* 흰색 */
-        .pou-level-3 { background: linear-gradient(135deg, #ffffff 0%, #b0b0b0 50%, #6e6e6e 100%); color: #333; } /* 은색 광택 */
-        .pou-level-4 { background: linear-gradient(135deg, #fff8e1 0%, #ffd700 50%, #cca100 100%); color: #333; } /* 샴페인 골드 광택 */
 
-        /* 타이머 영역 */
-        .timer-section {
-            text-align: center;
-            margin-bottom: 15px;
+        .pou-fire {
+            position: absolute;
+            top: -10px;
+            font-size: 10px;
         }
+
+        .total-time-box {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .total-time {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .current-date {
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        /* 하단 3/4 메인 콘텐츠 영역 */
+        .main-content {
+            height: 75%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 하단 네비게이션 탭 바 */
+        .nav-bar {
+            height: 55px;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            background-color: inherit;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            border-right: 1px solid var(--border-color);
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .nav-btn:last-child {
+            border-right: none;
+        }
+
+        .nav-btn.active {
+            background-color: rgba(0,0,0,0.08);
+        }
+
+        /* 공통 컴포넌트 스타일 */
+        button, input, select {
+            border: 2px solid var(--border-color);
+            padding: 4px 8px;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* 플래너 탭 스타일 */
+        .planner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            background: rgba(255,255,255,0.6);
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: #555;
+        }
+
+        /* 타이머 탭 스타일 */
+        .timer-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 15px;
+        }
+
         .timer-display {
             font-size: 42px;
             font-weight: bold;
             letter-spacing: 2px;
-            color: #333;
-        }
-        .timer-date {
-            font-size: 13px;
-            color: #666;
-            margin-top: 2px;
         }
 
-        /* 탭 메뉴 (원본 배치 고정) */
-        .tab-menu {
-            display: flex;
-            justify-content: center;
-            gap: 0;
-            border: 2px solid #333;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            background: #f4f4f4;
-        }
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 10px 0;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            border-right: 2px solid #333;
-            transition: 0.2s;
-        }
-        .tab-btn:last-child {
-            border-right: none;
-        }
-        .tab-btn.active {
-            background: #4a5d54;
-            color: #fff;
-        }
-
-        /* 패널 공통 */
-        .panel {
-            display: none;
-            border: 2px solid #333;
-            border-radius: 16px;
-            padding: 20px;
-            min-height: 350px;
-            background: #fff;
-        }
-        .panel.active {
-            display: block;
-        }
-
-        /* 날짜 네비게이터바 */
-        .sub-nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .nav-btn {
-            background: #fff;
-            border: 2px solid #333;
-            padding: 4px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .nav-btn:hover {
-            background: #333;
-            color: #fff;
-        }
-
-        /* 일일 플래너 입력부 */
-        .todo-input-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .subject-select {
-            padding: 8px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            font-weight: bold;
-            background: #fff;
-            cursor: pointer;
-        }
-        .todo-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 2px solid #333;
-            border-radius: 10px;
-        }
-        .add-btn {
-            background: #fff;
-            border: 2px solid #333;
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .add-btn:hover {
-            background: #333;
-            color: #fff;
-        }
-        .todo-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .todo-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f9f9f9;
-            border: 2px solid #ddd;
-            padding: 8px 12px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        .delete-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 3px 8px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* 월간 달력 그리드 */
+        /* 달력 탭 스타일 */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            text-align: center;
+        }
+
+        .cal-cell {
+            border: 1px solid var(--border-color);
+            min-height: 55px;
+            padding: 2px;
+            font-size: 10px;
+            background: rgba(255,255,255,0.4);
+            text-align: left;
+        }
+
+        .cal-header {
+            font-weight: bold;
+            text-align: center;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 통계 탭 스타일 */
+        .stats-subtabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* 설정 탭 스타일 */
+        .setting-group {
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .setting-group h4 {
+            margin-bottom: 8px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 3px;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 6px;
         }
-        .calendar-day-name {
-            text-align: center;
-            font-weight: bold;
-            padding: 4px;
-            font-size: 13px;
-        }
-        .calendar-date-box {
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            min-height: 70px;
-            padding: 6px;
-            background: #fafafa;
-        }
-        .date-num {
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .calendar-memo-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            font-size: 11px;
-            margin-top: 4px;
-            outline: none;
-        }
 
-        /* 타이머 탭 컨트롤 버튼 */
-        .timer-ctrl-box {
-            text-align: center;
-            margin-top: 40px;
+        /* 칭호 보관함 모달 */
+        #title-modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
         }
-        .big-timer-btn {
-            background: #4a5d54;
-            color: white;
-            border: 2px solid #333;
-            padding: 12px 30px;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-        .big-timer-btn.stop {
-            background: #ff6b6b;
-        }
-
-        /* 통계 및 설정 패널 안쪽 */
-        .info-card {
-            background: #f9f9f9;
-            border: 2px solid #ddd;
+        .modal-box {
+            width: 80%;
+            background: white;
+            border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <!-- 상단 상태바 -->
-    <div class="status-bar">
-        <div>
-            누적 시간: <span id="stat-hours">0시간</span> | 출석: <span id="stat-attendance">1일</span><br>
-            칭호: <span id="stat-titles">없음</span> | 메달: <span id="stat-medal">IRON</span>
+<div id="app">
+    <!-- 상단 1/4 영역 -->
+    <div class="header-section">
+        <div class="top-row">
+            <div class="user-info" id="user-info-box">
+                <div id="display-title">칭호 없음</div>
+                <div>메달: <span id="display-medal">없음</span></div>
+                <div>누적: <span id="display-accum-time">0시간</span></div>
+                <div>출석: <span id="display-attend">0일</span></div>
+                <button style="margin-top:4px; font-size:9px; padding:2px 4px;" onclick="openTitleModal()">칭호 보관함</button>
+            </div>
+            <div class="pou-container">
+                <div class="pou-fire" id="pou-fire-display"></div>
+                <div class="pou-avatar" id="pou-body"></div>
+                <div style="font-size:10px; margin-top:2px; font-weight:bold;" id="pou-name-label">푸우</div>
+            </div>
         </div>
-        <div class="pou-container">
-            <span id="pou-badge-name">[IRON] 아기 포우</span>
-            <div id="pou-box" class="pou-silhouette pou-level-0">👾</div>
-        </div>
-    </div>
-
-    <!-- 타이머 섹션 -->
-    <div class="timer-section">
-        <div class="timer-display" id="timer-display">00:00:00</div>
-        <div class="timer-date" id="current-date-text">2026.07.23.(목)</div>
-    </div>
-
-    <!-- 탭 메뉴 (원본 배치 고정) -->
-    <div class="tab-menu">
-        <button class="tab-btn active" onclick="switchTab('todo')">일일 플래너</button>
-        <button class="tab-btn" onclick="switchTab('timer')">타이머</button>
-        <button class="tab-btn" onclick="switchTab('calendar')">월간 달력</button>
-        <button class="tab-btn" onclick="switchTab('stats')">통계</button>
-        <button class="tab-btn" onclick="switchTab('settings')">설정</button>
-    </div>
-
-    <!-- 1. 일일 플래너 패널 -->
-    <div id="panel-todo" class="panel active">
-        <div class="sub-nav-bar">
-            <button class="nav-btn" onclick="changeDay(-1)">&lt; 이전</button>
-            <span id="planner-date-title">2026.07.23</span>
-            <button class="nav-btn" onclick="changeDay(1)">다음 &gt;</button>
-            <span id="goal-rate-text">목표 달성률: 0%</span>
-        </div>
-        <div class="todo-input-row">
-            <select id="subject-select" class="subject-select">
-                <option value="국어">국어</option>
-                <option value="수학">수학</option>
-                <option value="영어">영어</option>
-                <option value="탐구">탐구</option>
-                <option value="기타">기타</option>
-            </select>
-            <input type="text" id="todo-input" class="todo-input" placeholder="오늘 할 일을 입력하세요...">
-            <button class="add-btn" onclick="addTodo()">추가</button>
-        </div>
-        <ul id="todo-list" class="todo-list"></ul>
-    </div>
-
-    <!-- 2. 타이머 패널 -->
-    <div id="panel-timer" class="panel" style="text-align: center; padding-top: 60px;">
-        <h2>공부 집중 타이머</h2>
-        <p style="color: #666; font-size: 14px;">화면을 나가거나 꺼도 실제 시간차를 계산해 시간이 정확히 누적됩니다.</p>
-        <div style="font-size: 54px; font-weight: bold; margin: 20px 0;" id="timer-display-sub">00:00:00</div>
-        <div class="timer-ctrl-box">
-            <button class="big-timer-btn" id="start-stop-btn" onclick="toggleTimer()">시작</button>
+        <div class="total-time-box">
+            <div class="total-time" id="header-total-time">00:00:00</div>
+            <div class="current-date" id="header-date">2026년 7월 23일</div>
         </div>
     </div>
 
-    <!-- 3. 월간 달력 패널 (이전/다음 달 이동 및 메모 작성) -->
-    <div id="panel-calendar" class="panel">
-        <div class="sub-nav-bar">
-            <button class="nav-btn" onclick="changeMonth(-1)">&lt; 이전 달</button>
-            <span id="calendar-title">2026년 7월</span>
-            <button class="nav-btn" onclick="changeMonth(1)">다음 달 &gt;</button>
+    <!-- 하단 3/4 메인 콘텐츠 영역 -->
+    <div class="main-content">
+        <!-- 1. 플래너 탭 -->
+        <div id="tab-planner" class="tab-content active">
+            <div class="planner-header">
+                <div>
+                    <button onclick="changeDate(-1)">◀ 이전</button>
+                    <span id="planner-date-title" style="font-weight:bold; margin:0 6px;">오늘</span>
+                    <button onclick="changeDate(1)">다음 ▶</button>
+                </div>
+                <div>
+                    <select id="subject-select" onchange="filterSubject()"></select>
+                    <button onclick="openSubjectModal()" style="font-size:10px;">과목관리</button>
+                </div>
+            </div>
+            <div style="display:flex; gap:5px; margin-bottom:8px;">
+                <input type="text" id="todo-input" placeholder="할 일을 입력하세요..." style="flex:1;">
+                <select id="todo-subject-select"></select>
+                <button onclick=" addTodo()">추가</button>
+            </div>
+            <div id="todo-list-container" style="max-height: calc(100% - 75px); overflow-y:auto;"></div>
         </div>
-        <div class="calendar-grid" id="calendar-grid"></div>
+
+        <!-- 2. 타이머 탭 -->
+        <div id="tab-timer" class="tab-content">
+            <div class="timer-screen">
+                <div style="display:flex; gap:10px;">
+                    <button id="mode-pomodoro" onclick="setTimerMode('pomodoro')">포모도로</button>
+                    <button id="mode-free" onclick="setTimerMode('free')">자유 타이머</button>
+                </div>
+                <div class="timer-display" id="timer-clock">00:00:00</div>
+                <div style="display:flex; gap:10px;">
+                    <select id="timer-subject-select"></select>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="startTimer()" style="background:#b5e7a0; padding:8px 16px;">시작</button>
+                    <button onclick="pauseTimer()" style="background:#ffb3ba; padding:8px 16px;">일시정지</button>
+                    <button onclick="stopTimer()" style="background:#bae1ff; padding:8px 16px;">저장/종료</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 월간 달력 탭 -->
+        <div id="tab-calendar" class="tab-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <button onclick="changeMonth(-1)">◀</button>
+                <span id="cal-month-title" style="font-weight:bold;">2026년 7월</span>
+                <button onclick="changeMonth(1)">▶</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid-box"></div>
+        </div>
+
+        <!-- 4. 통계 탭 -->
+        <div id="tab-stats" class="tab-content">
+            <div class="stats-subtabs">
+                <button onclick="switchStats('daily')" id="btn-stat-daily">Daily</button>
+                <button onclick="switchStats('weekly')" id="btn-stat-weekly">Weekly</button>
+                <button onclick="switchStats('monthly')" id="btn-stat-monthly">Monthly</button>
+            </div>
+            <div style="margin-bottom:8px; text-align:center;">
+                <button onclick="changeStatDate(-1)">[이전]</button>
+                <span id="stat-period-title" style="font-weight:bold; margin:0 8px;">오늘 통계</span>
+                <button onclick="changeStatDate(1)">[다음]</button>
+            </div>
+            <div id="stats-body-container"></div>
+        </div>
+
+        <!-- 5. 설정 탭 -->
+        <div id="tab-settings" class="tab-content">
+            <div class="setting-group">
+                <h4>테마 변경</h4>
+                <div class="btn-grid">
+                    <button onclick="setTheme(1)">1. 민트 점박이</button>
+                    <button onclick="setTheme(2)">2. 연분홍 별</button>
+                    <button onclick="setTheme(3)">3. 갈색 단색</button>
+                    <button onclick="setTheme(4)">4. 갈색 초록점박이</button>
+                </div>
+            </div>
+            <div class="setting-group">
+                <h4>폰트 변경</h4>
+                <div class="btn-grid">
+                    <button onclick="setFont(1)">1. 고딕체</button>
+                    <button onclick="setFont(2)">2. 픽셀체</button>
+                    <button onclick="setFont(3)">3. 둥근체</button>
+                    <button onclick="setFont(4)">4. 볼드체</button>
+                </div>
+            </div>
+            <div class="setting-group">
+                <h4>디데이 설정</h4>
+                <input type="text" id="dday-name-input" placeholder="목표 이름" style="width:100%; margin-bottom:4px;">
+                <input type="date" id="dday-date-input" style="width:100%; margin-bottom:4px;">
+                <button onclick="saveDday()" style="width:100%;">디데이 저장</button>
+                <div id="dday-display-box" style="margin-top:6px; font-weight:bold;"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- 4. 통계 패널 -->
-    <div id="panel-stats" class="panel">
-        <h3>공부 통계 및 업적</h3>
-        <div class="info-card">
-            <strong>획득 칭호 목록:</strong> <span id="stats-titles-detail">없음</span>
-        </div>
-        <div class="info-card">
-            <strong>최고 메달 등급:</strong> <span id="stats-medal-detail">IRON (100% 달성 1일차)</span>
-        </div>
-        <div class="info-card">
-            <strong>총 누적 공부 시간:</strong> <span id="stats-time-detail">0시간</span>
-        </div>
+    <!-- 하단 네비게이션 탭 바 -->
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="switchTab('planner', this)"><span>📋</span>플래너</button>
+        <button class="nav-btn" onclick="switchTab('timer', this)"><span>⏱️</span>타이머</button>
+        <button class="nav-btn" onclick="switchTab('calendar', this)"><span>📅</span>월간달력</button>
+        <button class="nav-btn" onclick="switchTab('stats', this)"><span>📊</span>통계</button>
+        <button class="nav-btn" onclick="switchTab('settings', this)"><span>⚙️</span>설정</button>
     </div>
 
-    <!-- 5. 설정 패널 -->
-    <div id="panel-settings" class="panel">
-        <h3>플래너 설정</h3>
-        <div class="info-card">
-            <p>데이터 초기화 및 사용자 설정 관리 영역입니다.</p>
-            <button class="nav-btn" onclick="resetData()" style="background:#ff6b6b; color:#fff;">모든 데이터 초기화</button>
+    <!-- 칭호 보관함 모달 -->
+    <div id="title-modal">
+        <div class="modal-box">
+            <h4>칭호 보관함</h4>
+            <div id="unlocked-titles-list" style="margin:10px 0; max-height:150px; overflow-y:auto;"></div>
+            <button onclick="closeTitleModal()" style="width:100%;">닫기</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- [데이터 상태 관리] ---
-    let totalSeconds = 0;
-    let attendanceDays = 1;
-    let success100Days = 1; // 메달용 100% 달성 누적 일수
-    let isRunning = false;
+    // 상태 관리 데이터
+    let state = {
+        currentDate: new Date().toISOString().split('T')[0],
+        subjects: ['국어', '수학', '영어', '탐구', '기타'],
+        todos: {}, // { 'YYYY-MM-DD': [ {text, subject, completed} ] }
+        studyTimes: {}, // { 'YYYY-MM-DD': { '과목명': 초단위시간 } }
+        accumulatedSeconds: 0,
+        accumulatedDays: 1,
+        completed100DaysCount: 0,
+        unlockedTitles: [],
+        selectedTitle: '',
+        currentMedal: '',
+        ddayName: '',
+        ddayDate: '',
+        theme: 1,
+        font: 1,
+        statMode: 'daily',
+        statOffsetDate: new Date().toISOString().split('T')[0],
+        calYear: new Date().getFullYear(),
+        calMonth: new Date().getMonth(),
+        plannerOffsetDate: new Date().toISOString().split('T')[0]
+    };
+
+    // 타이머 변수
     let timerInterval = null;
-    let lastTimestamp = Date.now();
+    let timerSeconds = 0;
+    let timerRunning = false;
+    let selectedTimerSubject = '국어';
+    let timerMode = 'free';
 
-    let todos = [];
-    let calendarMemos = {}; // 날짜별 메모 저장
-
-    let currentPlannerDate = new Date(2026, 6, 23);
-    let currentCalDate = new Date(2026, 6, 23);
-
-    // --- [백그라운드 타이머 로직 (Date.now 시간차 계산)] ---
-    function toggleTimer() {
-        if (!isRunning) {
-            startTimer();
-        } else {
-            stopTimer();
+    // 로컬 스토리지 로드
+    function loadData() {
+        const saved = localStorage.getItem('plana_data_v1');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
+            } catch(e) {}
         }
     }
 
-    function startTimer() {
-        isRunning = true;
-        lastTimestamp = Date.now();
-        document.getElementById('start-stop-btn').innerText = '일시정지';
-        document.getElementById('start-stop-btn').classList.add('stop');
+    function saveData() {
+        localStorage.setItem('plana_data_v1', JSON.stringify(state));
+    }
 
-        timerInterval = setInterval(() => {
-            const now = Date.now();
-            const diffSeconds = Math.floor((now - lastTimestamp) / 1000);
-            if (diffSeconds > 0) {
-                totalSeconds += diffSeconds;
-                lastTimestamp = now;
-                updateUI();
+    // 초기화 실행
+    window.onload = function() {
+        loadData();
+        renderSubjects();
+        updateHeaderInfo();
+        renderPlanner();
+        renderCalendar();
+        renderStats();
+        setTheme(state.theme);
+        setFont(state.font);
+        
+        // 백그라운드 시간 측정 보정 로직 (Date.now 기반)
+        setInterval(() => {
+            if (timerRunning) {
+                timerSeconds++;
+                updateTimerDisplay();
             }
         }, 1000);
+    };
+
+    // 탭 전환
+    function switchTab(tabName, btnEl) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+        if(btnEl) btnEl.classList.add('active');
     }
 
-    function stopTimer() {
-        isRunning = false;
-        clearInterval(timerInterval);
-        document.getElementById('start-stop-btn').innerText = '시작';
-        document.getElementById('start-stop-btn').classList.remove('stop');
-    }
+    // 헤더 및 포우 정보 갱신
+    function updateHeaderInfo() {
+        const todayStr = new Date().toISOString().split('T')[0];
+        let todaySecs = 0;
+        if(state.studyTimes[todayStr]) {
+            todaySecs = Object.values(state.studyTimes[todayStr]).reduce((a,b)=>a+b, 0);
+        }
 
-    function formatTime(totalSec) {
-        const hrs = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-        const mins = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-        const secs = String(totalSec % 60).padStart(2, '0');
-        return `${hrs}:${mins}:${secs}`;
-    }
+        // 총 시간 표시
+        const hrs = Math.floor(todaySecs / 3600);
+        const mins = Math.floor((todaySecs % 3600) / 60);
+        const secs = todaySecs % 60;
+        document.getElementById('header-total-time').innerText = 
+            String(hrs).padStart(2,'0') + ':' + String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
 
-    // --- [칭호 & 갱신형 메달 로직] ---
-    function updateAchievements() {
-        const hours = totalSeconds / 3600;
-        let titles = [];
+        // 날짜 표시
+        const now = new Date();
+        document.getElementById('header-date').innerText = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
 
-        if (hours >= 100 && attendanceDays >= 100) titles.push('#GOAT');
-        else if (hours >= 100) titles.push('#참을성 갑');
+        // 포우 색상 및 불꽃 진화 (1시간 단위 5단계 + 6시간 이후 불꽃)
+        const pouBody = document.getElementById('pou-body');
+        const pouFire = document.getElementById('pou-fire-display');
+        let colorHex = '#8B5A2B';
+        if (hrs === 1) colorHex = '#a06531';
+        else if (hrs === 2) colorHex = '#b87333';
+        else if (hrs === 3) colorHex = '#d4af37';
+        else if (hrs === 4) colorHex = '#e6c65c';
+        else if (hrs >= 5) colorHex = '#ffd700'; // 성인 금색 포우
+        pouBody.style.backgroundColor = colorHex;
 
-        if (hours >= 500 && attendanceDays >= 365) titles.push('#CHALLENGER');
-        else if (hours >= 500) titles.push('#시간도둑');
+        if (hrs >= 6) {
+            let fireCount = hrs - 5;
+            pouFire.innerText = '🔥'.repeat(fireCount);
+        } else {
+            pouFire.innerText = '';
+        }
 
-        if (attendanceDays >= 365) titles.push('#광인');
-        else if (attendanceDays >= 100) titles.push('#출석의 달인');
-
-        document.getElementById('stat-titles').innerText = titles.length > 0 ? titles.join(', ') : '없음';
-        document.getElementById('stats-titles-detail').innerText = titles.length > 0 ? titles.join(', ') : '없음';
-
-        document.getElementById('stat-hours').innerText = `${Math.floor(hours)}시간`;
-        document.getElementById('stats-time-detail').innerText = `${Math.floor(hours)}시간`;
-        document.getElementById('stat-attendance').innerText = `${attendanceDays}일`;
-
-        // 포우 5단계 색상 진화
-        const pouBox = document.getElementById('pou-box');
-        pouBox.className = 'pou-silhouette';
-        if (hours >= 500) pouBox.classList.add('pou-level-4');
-        else if (hours >= 100) pouBox.classList.add('pou-level-3');
-        else if (hours >= 50) pouBox.classList.add('pou-level-2');
-        else if (hours >= 10) pouBox.classList.add('pou-level-1');
-        else pouBox.classList.add('pou-level-0');
-
-        // 메달 로직 (최고 등급 갱신형)
-        let medal = 'IRON';
-        if (success100Days >= 150) medal = 'CHALLENGER';
-        else if (success100Days >= 100) medal = 'GRANDMASTER';
-        else if (success100Days >= 75) medal = 'MASTER';
-        else if (success100Days >= 50) medal = 'DIAMOND';
-        else if (success100Days >= 30) medal = 'EMERALD';
-        else if (success100Days >= 15) medal = 'PLATINUM';
-        else if (success100Days >= 7) medal = 'GOLD';
-        else if (success100Days >= 5) medal = 'SILVER';
-        else if (success100Days >= 3) medal = 'BRONZE';
-
-        document.getElementById('stat-medal').innerText = medal;
-        document.getElementById('stats-medal-detail').innerText = `${medal} (달성 누적 ${success100Days}일차)`;
-        document.getElementById('pou-badge-name').innerText = `[${medal}] 아기 포우`;
-    }
-
-    function updateUI() {
-        const timeStr = formatTime(totalSeconds);
-        document.getElementById('timer-display').innerText = timeStr;
-        document.getElementById('timer-display-sub').innerText = timeStr;
-        updateAchievements();
-    }
-
-    // --- [탭 전환] ---
-    function switchTab(tabName) {
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        // 칭호 및 메달 이름 결합 표시
+        let pouName = "푸우";
+        // 조기 타이머 / 10시간 이상 칭호 판정 (간이)
+        if(hrs >= 10) pouName = "불타는 푸우";
         
-        const map = { 'todo': 0, 'timer': 1, 'calendar': 2, 'stats': 3, 'settings': 4 };
-        const idx = map[tabName];
+        let titleDisp = state.selectedTitle ? state.selectedTitle : "칭호 없음";
+        let medalDisp = state.currentMedal ? `[${state.currentMedal}]` : "";
 
-        document.querySelectorAll('.panel')[idx].classList.add('active');
-        document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+        document.getElementById('display-title').innerText = titleDisp;
+        document.getElementById('display-medal').innerText = state.currentMedal || "없음";
+        document.getElementById('display-accum-time').innerText = Math.floor(todaySecs/3600) + "시간";
+        document.getElementById('display-attend').innerText = state.accumulatedDays + "일";
+        document.getElementById('pou-name-label').innerText = `${medalDisp} ${pouName}`;
 
-        if (tabName === 'calendar') renderCalendar();
+        // 업적 체크 (누적 시간 및 출석)
+        checkAchievements(todaySecs);
     }
 
-    // --- [일일 플래너 & 체크리스트 삭제 기능] ---
-    function changeDay(dir) {
-        currentPlannerDate.setDate(currentPlannerDate.getDate() + dir);
-        const y = currentPlannerDate.getFullYear();
-        const m = String(currentPlannerDate.getMonth() + 1).padStart(2, '0');
-        const d = String(currentPlannerDate.getDate()).padStart(2, '0');
-        document.getElementById('planner-date-title').innerText = `${y}.${m}.${d}`;
+    // 업적 시스템 판정
+    function checkAchievements(totalSecs) {
+        let totalHoursAll = Math.floor(totalSecs / 3600); // 간이 누적
+        let days = state.accumulatedDays;
+
+        let newTitles = [...state.unlockedTitles];
+        if (totalHoursAll >= 100 && !newTitles.includes("#참을성 갑🪽")) newTitles.push("#참을성 갑🪽");
+        if (totalHoursAll >= 500 && !newTitles.includes("#시간도둑🥷🏿")) newTitles.push("#시간도둑🥷🏿");
+        if (days >= 100 && !newTitles.includes("#출석의 달인🫰🏻")) newTitles.push("#출석의 달인🫰🏻");
+        if (days >= 365 && !newTitles.includes("#광인☠️")) newTitles.push("#광인☠️");
+        if (totalHoursAll >= 100 && days >= 100 && !newTitles.includes("#GOAT🐐")) newTitles.push("#GOAT🐐");
+        if (totalHoursAll >= 500 && days >= 365 && !newTitles.includes("#CHALLENGER☠️")) newTitles.push("#CHALLENGER☠️");
+
+        state.unlockedTitles = newTitles;
+
+        // 메달 승급 판정 (대체형)
+        let cDays = state.completed100DaysCount;
+        if (cDays >= 150) state.currentMedal = "CHALLENGER⚜️";
+        else if (cDays >= 100) state.currentMedal = "GRANDMASTER🐦‍🔥";
+        else if (cDays >= 75) state.currentMedal = "MASTER👿";
+        else if (cDays >= 50) state.currentMedal = "DIAMOND💎";
+        else if (cDays >= 30) state.currentMedal = "EMERALD❇️";
+        else if (cDays >= 15) state.currentMedal = "PLATINUM 🧊";
+        else if (cDays >= 7) state.currentMedal = "GOLD👑";
+        else if (cDays >= 5) state.currentMedal = "SILVER⚔️";
+        else if (cDays >= 3) state.currentMedal = "BRONZE🤎";
+        else if (cDays >= 1) state.currentMedal = "IRON🔨";
+
+        saveData();
+    }
+
+    // 칭호 보관함 모달
+    function openTitleModal() {
+        const listEl = document.getElementById('unlocked-titles-list');
+        listEl.innerHTML = '';
+        if(state.unlockedTitles.length === 0) {
+            listEl.innerHTML = '<div>획득한 칭호가 없습니다.</div>';
+        } else {
+            state.unlockedTitles.forEach(t => {
+                listEl.innerHTML += `<div style="margin-bottom:6px;"><button onclick="selectTitle('${t}')">${t}</button></div>`;
+            });
+        }
+        document.getElementById('title-modal').style.display = 'flex';
+    }
+    function closeTitleModal() {
+        document.getElementById('title-modal').style.display = 'none';
+    }
+    function selectTitle(t) {
+        state.selectedTitle = t;
+        saveData();
+        updateHeaderInfo();
+        closeTitleModal();
+    }
+
+    // 과목 및 셀렉트 렌더링
+    function renderSubjects() {
+        const sSelects = [
+            document.getElementById('subject-select'),
+            document.getElementById('todo-subject-select'),
+            document.getElementById('timer-subject-select')
+        ];
+        sSelects.forEach(el => {
+            if(!el) return;
+            const currentVal = el.value;
+            el.innerHTML = '<option value="">전체과목</option>';
+            state.subjects.forEach(sub => {
+                el.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+            el.value = currentVal;
+        });
+    }
+
+    function openSubjectModal() {
+        let newSub = prompt("추가할 과목명을 입력하세요:");
+        if(newSub && !state.subjects.includes(newSub)) {
+            state.subjects.push(newSub);
+            saveData();
+            renderSubjects();
+        }
+    }
+
+    // 플래너 기능
+    function renderPlanner() {
+        const container = document.getElementById('todo-list-container');
+        container.innerHTML = '';
+        const targetDate = state.plannerOffsetDate;
+        document.getElementById('planner-date-title').innerText = targetDate;
+
+        if(!state.todos[targetDate]) state.todos[targetDate] = [];
+        
+        state.todos[targetDate].forEach((item, idx) => {
+            container.innerHTML += `
+                <div class="todo-item ${item.completed ? 'completed' : ''}">
+                    <label style="display:flex; align-items:center; gap:8px; flex:1;">
+                        <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleTodo('${targetDate}', ${idx})">
+                        <span>[${item.subject}] ${item.text}</span>
+                    </label>
+                    <button onclick="deleteTodo('${targetDate}', ${idx})" style="font-size:10px;">삭제</button>
+                </div>
+            `;
+        });
     }
 
     function addTodo() {
-        const subject = document.getElementById('subject-select').value;
-        const input = document.getElementById('todo-input');
-        const text = input.value.trim();
-        if (!text) return;
-
-        todos.push({ subject, text, completed: false });
-        input.value = '';
-        renderTodos();
+        const text = document.getElementById('todo-input').value;
+        const sub = document.getElementById('todo-subject-select').value || state.subjects[0];
+        if(!text) return;
+        const targetDate = state.plannerOffsetDate;
+        if(!state.todos[targetDate]) state.todos[targetDate] = [];
+        state.todos[targetDate].push({ text, subject: sub, completed: false });
+        document.getElementById('todo-input').value = '';
+        saveData();
+        renderPlanner();
     }
 
-    function deleteTodo(index) {
-        todos.splice(index, 1);
-        renderTodos();
+    function toggleTodo(date, idx) {
+        let item = state.todos[date][idx];
+        item.completed = !item.completed;
+        // 완료시 아래로 정렬
+        if(item.completed) {
+            state.todos[date].splice(idx, 1);
+            state.todos[date].push(item);
+            // 100% 달성 판정 (오늘 기준 모든 할일 완료시)
+            state.completed100DaysCount++;
+        } else {
+            state.completed100DaysCount = Math.max(0, state.completed100DaysCount - 1);
+        }
+        saveData();
+        renderPlanner();
+        updateHeaderInfo();
     }
 
-    function toggleTodo(index) {
-        todos[index].completed = !todos[index].completed;
-        renderTodos();
+    function deleteTodo(date, idx) {
+        state.todos[date].splice(idx, 1);
+        saveData();
+        renderPlanner();
     }
 
-    function renderTodos() {
-        const list = document.getElementById('todo-list');
-        list.innerHTML = '';
-        let completedCount = 0;
+    function changeDate(val) {
+        let d = new Date(state.plannerOffsetDate);
+        d.setDate(d.getDate() + val);
+        state.plannerOffsetDate = d.toISOString().split('T')[0];
+        renderPlanner();
+    }
 
-        todos.forEach((item, index) => {
-            if (item.completed) completedCount++;
-            const li = document.createElement('li');
-            li.className = 'todo-item';
-            li.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <input type="checkbox" ${item.completed ? 'checked' : ''} onclick="toggleTodo(${index})">
-                    <span style="font-weight:bold; color:#4a5d54;">[${item.subject}]</span>
-                    <span style="${item.completed ? 'text-decoration: line-through; color: #888;' : ''}">${item.text}</span>
-                </div>
-                <button class="delete-btn" onclick="deleteTodo(${index})">삭제</button>
-            `;
-            list.appendChild(li);
+    function filterSubject() { renderPlanner(); }
+
+    // 타이머 기능
+    function setTimerMode(mode) {
+        timerMode = mode;
+        document.getElementById('mode-pomodoro').style.background = mode === 'pomodoro' ? '#ddd' : '#fff';
+        document.getElementById('mode-free').style.background = mode === 'free' ? '#ddd' : '#fff';
+    }
+
+    function startTimer() {
+        if(timerRunning) return;
+        timerRunning = true;
+    }
+
+    function pauseTimer() {
+        timerRunning = false;
+    }
+
+    function stopTimer() {
+        if(timerSeconds <= 0) return;
+        timerRunning = false;
+        const sub = document.getElementById('timer-subject-select').value || '기타';
+        const todayStr = new Date().toISOString().split('T')[0];
+        if(!state.studyTimes[todayStr]) state.studyTimes[todayStr] = {};
+        if(!state.studyTimes[todayStr][sub]) state.studyTimes[todayStr][sub] = 0;
+        state.studyTimes[todayStr][sub] += timerSeconds;
+
+        timerSeconds = 0;
+        updateTimerDisplay();
+        saveData();
+        updateHeaderInfo();
+        alert("공부 시간이 저장되었습니다!");
+    }
+
+    function updateTimerDisplay() {
+        let hrs = Math.floor(timerSeconds / 3600);
+        let mins = Math.floor((timerSeconds % 3600) / 60);
+        let secs = timerSeconds % 60;
+        document.getElementById('timer-clock').innerText = 
+            String(hrs).padStart(2,'0') + ':' + String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+    }
+
+    // 월간 달력 기능
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-grid-box');
+        grid.innerHTML = '';
+        const y = state.calYear;
+        const m = state.calMonth;
+        document.getElementById('cal-month-title').innerText = `${y}년 ${m+1}월`;
+
+        const daysOfWeek = ['일','월','화','수','목','금','토'];
+        daysOfWeek.forEach(d => {
+            grid.innerHTML += `<div class="cal-header">${d}</div>`;
         });
 
-        const rate = todos.length > 0 ? Math.round((completedCount / todos.length) * 100) : 0;
-        document.getElementById('goal-rate-text').innerText = `목표 달성률: ${rate}%`;
+        const firstDay = new Date(y, m, 1).getDay();
+        const lastDate = new Date(y, m+1, 0).getDate();
+
+        for(let i=0; i<firstDay; i++) {
+            grid.innerHTML += `<div></div>`;
+        }
+
+        for(let d=1; d<=lastDate; d++) {
+            let dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            grid.innerHTML += `
+                <div class="cal-cell">
+                    <div style="font-weight:bold;">${d}</div>
+                </div>
+            `;
+        }
     }
 
-    // --- [월간 달력 (이전/다음 달 이동 & 메모 작성)] ---
-    const fn_days = ['일', '월', '화', '수', '목', '금', '토'];
-
-    function changeMonth(direction) {
-        currentCalDate.setMonth(currentCalDate.getMonth() + direction);
+    function changeMonth(val) {
+        state.calMonth += val;
+        if(state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+        if(state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
         renderCalendar();
     }
 
-    function renderCalendar() {
-        const year = currentCalDate.getFullYear();
-        const month = currentCalDate.getMonth();
+    // 통계 기능
+    function switchStats(mode) {
+        state.statMode = mode;
+        renderStats();
+    }
+
+    function renderStats() {
+        const body = document.getElementById('stats-body-container');
+        body.innerHTML = '';
+        document.getElementById('stat-period-title').innerText = state.statOffsetDate;
+
+        let targetData = state.studyTimes[state.statOffsetDate] || {};
+        let totalSec = Object.values(targetData).reduce((a,b)=>a+b, 0);
+
+        body.innerHTML += `<div class="stat-card">총 공부 시간: ${Math.floor(totalSec/3600)}시간 ${Math.floor((totalSec%3600)/60)}분</div>`;
         
-        document.getElementById('calendar-title').innerText = `${year}년 ${month + 1}월`;
-
-        const grid = document.getElementById('calendar-grid');
-        grid.innerHTML = '';
-
-        fn_days.forEach(day => {
-            const div = document.createElement('div');
-            div.className = 'calendar-day-name';
-            div.innerText = day;
-            grid.appendChild(div);
+        state.subjects.forEach(sub => {
+            let sSec = targetData[sub] || 0;
+            let ratio = totalSec > 0 ? Math.round((sSec / totalSec) * 100) : 0;
+            body.innerHTML += `<div class="stat-card">${sub}: ${Math.floor(sSec/3600)}시간 (${ratio}%)</div>`;
         });
-
-        const firstDayIndex = new Date(year, month, 1).getDay();
-        const totalDays = new Date(year, month + 1, 0).getDate();
-
-        for (let i = 0; i < firstDayIndex; i++) {
-            grid.appendChild(document.createElement('div'));
-        }
-
-        for (let d = 1; d <= totalDays; d++) {
-            const dateKey = `${year}-${month + 1}-${d}`;
-            const dateBox = document.createElement('div');
-            dateBox.className = 'calendar-date-box';
-            
-            const memoValue = calendarMemos[dateKey] || '';
-            dateBox.innerHTML = `
-                <div class="date-num">${d}</div>
-                <input type="text" class="calendar-memo-input" placeholder="메모..." value="${memoValue}" oninput="saveCalendarMemo('${dateKey}', this.value)">
-            `;
-            grid.appendChild(dateBox);
-        }
     }
 
-    function saveCalendarMemo(key, val) {
-        calendarMemos[key] = val;
+    function changeStatDate(val) {
+        let d = new Date(state.statOffsetDate);
+        d.setDate(d.getDate() + val);
+        state.statOffsetDate = d.toISOString().split('T')[0];
+        renderStats();
     }
 
-    function resetData() {
-        if (confirm('모든 데이터를 초기화하시겠습니까?')) {
-            totalSeconds = 0;
-            todos = [];
-            calendarMemos = {};
-            updateUI();
-            renderTodos();
-            renderCalendar();
+    // 설정 탭 (테마 및 폰트 변경 전용)
+    function setTheme(num) {
+        state.theme = num;
+        saveData();
+        const app = document.getElementById('app');
+        if(num === 1) {
+            app.style.backgroundColor = '#e8f5e9';
+            app.style.backgroundImage = 'radial-gradient(#8B5A2B 15%, transparent 16%)';
+            app.style.backgroundSize = '20px 20px';
+        } else if(num === 2) {
+            app.style.backgroundColor = '#ffe4e1';
+            app.style.backgroundImage = 'radial-gradient(#ff69b4 15%, transparent 16%)';
+            app.style.backgroundSize = '25px 25px';
+        } else if(num === 3) {
+            app.style.backgroundColor = '#d2b48c';
+            app.style.backgroundImage = 'none';
+        } else if(num === 4) {
+            app.style.backgroundColor = '#8B5A2B';
+            app.style.backgroundImage = 'radial-gradient(#556b2f 15%, transparent 16%)';
+            app.style.backgroundSize = '20px 20px';
         }
     }
 
-    // 초기 실행
-    updateUI();
-    renderTodos();
-    renderCalendar();
+    function setFont(num) {
+        state.font = num;
+        saveData();
+        if(num === 1) document.documentElement.style.setProperty('--font-family', "'Nanum Gothic', sans-serif");
+        else if(num === 2) document.documentElement.style.setProperty('--font-family', "'Press Start 2P', monospace");
+        else if(num === 3) document.documentElement.style.setProperty('--font-family', "'Gowun Dodum', sans-serif");
+        else if(num === 4) document.documentElement.style.setProperty('--font-family', "'Noto Sans KR', sans-serif");
+    }
+
+    function saveDday() {
+        state.ddayName = document.getElementById('dday-name-input').value;
+        state.ddayDate = document.getElementById('dday-date-input').value;
+        saveData();
+        renderDday();
+    }
+
+    function renderDday() {
+        if(!state.ddayDate) return;
+        const diff = Math.ceil((new Date(state.ddayDate) - new Date()) / (1000 * 60 * 60 * 24));
+        document.getElementById('dday-display-box').innerText = `${state.ddayName} D-${diff}`;
+    }
 </script>
 
 </body>
