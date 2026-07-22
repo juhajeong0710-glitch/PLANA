@@ -5,41 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLANA (플래나)</title>
     <style>
+        /* 테마 정의 */
         :root {
             --bg-color: #eaf3f0;
-            --dot-color: rgba(143, 163, 153, 0.25);
+            --dot-color: rgba(143, 163, 153, 0.3);
             --main-border: #4a5851;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
         }
+
+        body.theme-mint {
+            --bg-color: #eaf3f0;
+            --dot-color: rgba(143, 163, 153, 0.3);
+            --main-border: #4a5851;
+            --card-bg: #ffffff;
+        }
+        body.theme-pink {
+            --bg-color: #fae1e8;
+            --dot-color: rgba(219, 154, 175, 0.3);
+            --main-border: #8c5365;
+            --card-bg: #ffffff;
+        }
+        body.theme-brown {
+            --bg-color: #d7ccc8;
+            --dot-color: rgba(141, 110, 99, 0.3);
+            --main-border: #4e342e;
+            --card-bg: #efebe9;
+        }
+        body.theme-mute {
+            --bg-color: #4e433d;
+            --dot-color: rgba(110, 133, 115, 0.4);
+            --main-border: #a3b8a8;
+            --card-bg: #3e332e;
+            --text-color: #f5f5f5;
+        }
+
+        /* 폰트 정의 */
+        body.font-gothic { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+        body.font-pixel { font-family: 'Courier New', Courier, monospace; }
+        body.font-round { font-family: 'Jua', 'Comic Sans MS', sans-serif; }
+        body.font-bold { font-family: 'Arial Black', Gadget, sans-serif; font-weight: bold; }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             background-color: var(--bg-color);
-            background-image: radial-gradient(var(--dot-color) 3px, transparent 3px);
-            background-size: 32px 32px;
-            color: #333;
+            background-image: radial-gradient(var(--dot-color) 4px, transparent 4px);
+            background-size: 40px 40px;
+            color: var(--text-color);
             box-sizing: border-box;
+            font-family: var(--font-family);
         }
 
         .container {
-            max-width: 950px;
-            margin: 0 auto;
-            padding: 15px;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 2px solid var(--main-border);
+            box-shadow: 4px 4px 0px var(--main-border);
         }
 
-        /* 1/4 상단 영역 (선으로 분리) */
+        /* 상단 1/4 구역 디자인 */
         .top-quarter {
             border-bottom: 2px solid var(--main-border);
-            padding-bottom: 12px;
-            margin-bottom: 15px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .left-info {
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.6;
         }
 
@@ -48,56 +87,62 @@
         }
 
         .center-time-box h1 {
-            font-size: 42px;
+            font-size: 44px;
             margin: 0;
             font-weight: 800;
-            font-family: monospace;
             letter-spacing: 1px;
         }
 
         .center-time-box .date-str {
-            font-size: 12px;
-            color: #555;
-            margin-top: 2px;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
         }
 
-        /* 푸우 캐릭터 및 얼굴 커스텀 */
+        /* 푸우 캐릭터 디자인 (원형이 아닌 전용 형태) */
         .pou-container {
             text-align: center;
         }
 
-        .pou-name-tag {
+        .pou-meta-info {
             font-size: 11px;
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
-        .pou-avatar {
-            width: 60px;
-            height: 52px;
-            background: #ab8d62;
-            border-radius: 50% 50% 45% 45%;
+        .pou-avatar-wrap {
+            width: 65px;
+            height: 60px;
             margin: 0 auto;
             position: relative;
-            border: 2px solid #333;
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .pou-body {
+            width: 55px;
+            height: 48px;
+            background: #ab8d62;
+            border-radius: 50% 50% 45% 45%;
+            position: absolute;
+            bottom: 0;
+            left: 5px;
+            border: 2px solid var(--main-border);
         }
 
         .pou-eye {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background: white;
             border-radius: 50%;
             position: absolute;
-            top: 15px;
+            top: 14px;
             border: 1px solid #333;
         }
         .pou-eye.left { left: 12px; }
         .pou-eye.right { right: 12px; }
 
         .pou-pupil {
-            width: 4px;
-            height: 4px;
+            width: 3px;
+            height: 3px;
             background: #333;
             border-radius: 50%;
             position: absolute;
@@ -105,84 +150,82 @@
             left: 3px;
         }
 
-        .pou-mouth {
+        .pou-expression {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 15px;
+            font-size: 14px;
         }
 
-        /* 탭 메뉴 (직사각형 선 구조) */
+        /* 탭 메뉴 */
         .nav-tabs {
             display: flex;
-            border: 1px solid var(--main-border);
-            background: rgba(255, 255, 255, 0.7);
-            margin-bottom: 15px;
+            border: 2px solid var(--main-border);
+            background: rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 9px 0;
+            padding: 10px 0;
             text-align: center;
             background: none;
             border: none;
-            border-right: 1px solid var(--main-border);
-            font-size: 12px;
+            border-right: 2px solid var(--main-border);
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
+            color: var(--text-color);
         }
         .tab-btn:last-child { border-right: none; }
-        .tab-btn.active { background: white; border-bottom: 3px solid var(--main-border); }
+        .tab-btn.active { background: var(--main-border); color: #fff; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* 직사각형 박스 스타일 */
-        .rect-box {
-            border: 1px solid var(--main-border);
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
+        /* 컴포넌트 박스 스타일 */
+        .content-box {
+            border: 2px solid var(--main-border);
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 15px;
         }
 
-        /* 입력 및 컨트롤 바 */
         .input-row {
             display: flex;
-            border: 1px solid var(--main-border);
-            background: white;
-            margin-bottom: 10px;
+            border: 2px solid var(--main-border);
+            background: var(--card-bg);
+            margin-bottom: 15px;
         }
         .input-row select, .input-row input {
             border: none;
-            padding: 9px;
+            padding: 10px;
             outline: none;
             background: transparent;
-            font-size: 13px;
+            font-size: 14px;
+            color: var(--text-color);
         }
         .input-row input { flex: 1; }
         .add-btn {
-            border-left: 1px solid var(--main-border);
-            background: #f0f0f0;
-            padding: 0 16px;
+            border-left: 2px solid var(--main-border);
+            background: #eee;
+            padding: 0 20px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 12px;
         }
 
         .todo-item {
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 9px 5px;
-            font-size: 13px;
-            gap: 10px;
-            background: white;
-            transition: all 0.3s;
+            border-bottom: 1px dashed var(--main-border);
+            padding: 10px 5px;
+            font-size: 14px;
+            gap: 12px;
         }
         .todo-item.done span {
             text-decoration: line-through;
-            color: #888;
+            opacity: 0.6;
         }
         .todo-item span { flex: 1; }
 
@@ -190,44 +233,48 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            font-size: 13px;
+            margin-bottom: 15px;
+            font-size: 14px;
             font-weight: bold;
         }
-        .control-btn {
-            border: 1px solid var(--main-border);
-            background: white;
-            padding: 4px 10px;
+        .ctrl-btn {
+            border: 2px solid var(--main-border);
+            background: var(--card-bg);
+            padding: 5px 12px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
+            color: var(--text-color);
         }
 
-        /* 통계 원그래프 및 과목별 바 */
-        .stat-flex {
-            display: flex;
-            gap: 20px;
+        /* 통계 및 칭호 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
             align-items: center;
         }
-        .pie-chart-mock {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: conic-gradient(#4a5851 0deg 200deg, #8fa399 200deg 320deg, #d0ded8 320deg 360deg);
-            border: 2px solid var(--main-border);
+        .modal-body {
+            background: #fff;
+            padding: 25px;
+            border: 3px solid #4a5851;
+            width: 350px;
+            color: #333;
+            text-align: center;
         }
     </style>
 </head>
-<body>
+<body class="theme-mint font-gothic">
 
 <div class="container">
-    <!-- 1. 상단 1/4 구역 (선으로 분리, 총시간, 날짜, 포우) -->
+    <!-- 상단 1/4 구역 -->
     <div class="top-quarter">
         <div class="left-info">
-            <div>⏱️ 누적 시간: <b id="total-time">0시간 0분</b></div>
-            <div>📅 누적 출석: <b id="total-days">1일</b></div>
+            <div>⏱️ 누적: <b id="total-time">0시간</b> | 📅 출석: <b id="total-days">1일</b></div>
             <div>🎯 D-Day: <b id="d-day-view">미설정</b></div>
-            <button class="control-btn" style="margin-top:4px;" onclick="alert('🏆 칭호 보관함: [시작이 반] 획득!')">🏆 칭호함</button>
+            <button class="ctrl-btn" style="margin-top:6px;" onclick="openModal('badge-modal')">🏆 칭호/메달함</button>
         </div>
 
         <div class="center-time-box">
@@ -236,19 +283,21 @@
         </div>
 
         <div class="pou-container">
-            <div class="pou-name-tag" id="pou-full-title">· 아기 포우 ·</div>
-            <div class="pou-avatar">
-                <div class="pou-eye left"><div class="pou-pupil"></div></div>
-                <div class="pou-eye right"><div class="pou-pupil"></div></div>
-                <div class="pou-mouth" id="pou-face-expression">😠</div>
+            <div class="pou-meta-info" id="pou-full-title">[IRON🔨] 아기 포우</div>
+            <div class="pou-avatar-wrap">
+                <div class="pou-body">
+                    <div class="pou-eye left"><div class="pou-pupil"></div></div>
+                    <div class="pou-eye right"><div class="pou-pupil"></div></div>
+                    <div class="pou-expression" id="pou-face-expression">😠</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. 하단 3/4 구역 탭 메뉴 -->
+    <!-- 탭 메뉴 -->
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('daily')">일일 플래너</button>
-        <button class="tab-btn" onclick="switchTab('timer')">타이머/백색소음</button>
+        <button class="tab-btn" onclick="switchTab('timer')">타이머</button>
         <button class="tab-btn" onclick="switchTab('calendar')">월간 달력</button>
         <button class="tab-btn" onclick="switchTab('stats')">통계</button>
         <button class="tab-btn" onclick="switchTab('settings')">설정</button>
@@ -258,9 +307,9 @@
     <div id="tab-daily" class="tab-content active">
         <div class="sub-bar">
             <div>
-                <button class="control-btn" onclick="changeDate(-1)">&lt; 이전</button>
-                <span id="current-planner-date" style="margin: 0 8px;">2026.07.23</span>
-                <button class="control-btn" onclick="changeDate(1)">다음 &gt;</button>
+                <button class="ctrl-btn" onclick="changeDate(-1)">&lt; 이전</button>
+                <span id="current-planner-date" style="margin: 0 10px;">2026.07.23</span>
+                <button class="ctrl-btn" onclick="changeDate(1)">다음 &gt;</button>
             </div>
             <div>목표 달성률: <span id="achievement-rate">0%</span></div>
         </div>
@@ -271,67 +320,49 @@
                 <option value="수학">수학</option>
                 <option value="영어">영어</option>
                 <option value="탐구">탐구</option>
-                <option value="기타">기타</option>
             </select>
             <input type="text" id="todo-input-text" placeholder="오늘 할 일을 입력하세요..." onkeypress="if(event.key==='Enter') addTodo()">
             <button class="add-btn" onclick="addTodo()">추가</button>
         </div>
 
-        <div class="rect-box" id="todo-list-container" style="min-height: 260px;">
-            <!-- 체크리스트 항목들 -->
+        <div class="content-box" id="todo-list-container" style="min-height: 250px;">
+            <!-- 리스트 항목 -->
         </div>
     </div>
 
-    <!-- 타이머 / 백색소음 탭 -->
+    <!-- 타이머 탭 -->
     <div id="tab-timer" class="tab-content">
-        <div class="rect-box" style="text-align: center; padding: 30px;">
-            <h3>⏱️ 스터디 타이머 (포모도로 / 자유 선택)</h3>
+        <div class="content-box" style="text-align: center; padding: 40px;">
+            <h3>스터디 타이머</h3>
             <div style="margin: 15px 0;">
-                모드: 
-                <select id="timer-mode-select" style="padding: 5px;">
+                방식: 
+                <select id="timer-mode" style="padding: 5px;">
                     <option value="free">자유 타이머</option>
-                    <option value="pomodoro">포모도로 (25분 집중 / 5분 휴식)</option>
+                    <option value="pomodoro">포모도로 (25분/5분)</option>
                 </select>
             </div>
-            <button class="control-btn" style="padding: 12px 30px; font-size: 15px; font-weight:bold;" onclick="toggleTimer()" id="timer-btn">시작</button>
-            <button class="control-btn" style="padding: 12px 20px; font-size: 15px;" onclick="resetTimer()">리셋</button>
-            
-            <hr style="margin: 25px 0; border:0; border-top:1px solid #ccc;">
-            
-            <h3>🎧 백색소음 (진짜 오디오 재생)</h3>
-            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
-                <label><input type="radio" name="noise" onclick="setNoise('none')" checked> 무소음</label>
-                <label><input type="radio" name="noise" onclick="setNoise('typing')"> ⌨️ 타이핑소리</label>
-                <label><input type="radio" name="noise" onclick="setNoise('pencil')"> ✏️ 연필사각소리</label>
-                <label><input type="radio" name="noise" onclick="setNoise('bgm')"> ☕ BGM+거리소음</label>
-            </div>
+            <button class="ctrl-btn" style="padding: 12px 30px; font-size:16px;" onclick="toggleTimer()" id="timer-btn">시작</button>
+            <button class="ctrl-btn" style="padding: 12px 20px; font-size:16px;" onclick="resetTimer()">리셋</button>
         </div>
     </div>
 
     <!-- 월간 달력 탭 -->
     <div id="tab-calendar" class="tab-content">
-        <div class="rect-box">
-            <h3>🗓️ 월간 달력 (미래 날짜 미리 작성 가능)</h3>
-            <div style="padding: 25px; text-align: center; background: #fafafa; border: 1px solid #ddd; margin-top: 10px;">
-                2026년 7월 달력 그리드 (직사각형 격자 구조)
-            </div>
+        <div class="content-box">
+            <h3>월간 플래너 (미래/과거 미리 작성)</h3>
+            <div style="padding: 40px; text-align: center; opacity: 0.7;">직사각형 달력 그리드 영역</div>
         </div>
     </div>
 
     <!-- 통계 탭 -->
     <div id="tab-stats" class="tab-content">
-        <div class="rect-box">
-            <h3>📊 과목별 학습 통계 & 원 그래프</h3>
-            <div class="stat-flex" style="margin-top: 15px;">
-                <div class="pie-chart-mock" title="과목별 비율 원그래프"></div>
+        <div class="content-box">
+            <h3>학습 통계</h3>
+            <div style="display: flex; gap: 20px; align-items: center; margin-top: 15px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#4a5851 0deg 220deg, #8fa399 220deg 360deg); border: 2px solid var(--main-border);"></div>
                 <div>
-                    <p><b>📚 과목별 누적 시간:</b></p>
-                    <ul id="subject-stat-list" style="line-height: 1.8; font-size: 13px;">
-                        <li>국어: 0시간 (0%)</li>
-                        <li>수학: 0시간 (0%)</li>
-                        <li>영어: 0시간 (0%)</li>
-                        <li>탐구: 0시간 (0%)</li>
-                    </ul>
+                    <p><b>과목별 분포 비율</b></p>
+                    <p style="font-size: 13px;">국어 60% / 수학 40%</p>
                 </div>
             </div>
         </div>
@@ -339,10 +370,38 @@
 
     <!-- 설정 탭 -->
     <div id="tab-settings" class="tab-content">
-        <div class="rect-box">
-            <h3>⚙️ 환경 설정 및 D-Day</h3>
-            <label>디데이 목표일: <input type="date" id="dday-date-input" onchange="updateDDay()"></label>
+        <div class="content-box">
+            <h3>앱 환경 설정</h3>
+            <div style="margin-bottom: 15px;">
+                <label><b>테마 선택:</b></label><br>
+                <button class="ctrl-btn" onclick="setTheme('mint')">연한민트</button>
+                <button class="ctrl-btn" onclick="setTheme('pink')">연분홍</button>
+                <button class="ctrl-btn" onclick="setTheme('brown')">갈색</button>
+                <button class="ctrl-btn" onclick="setTheme('mute')">뮤트초록</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label><b>폰트 선택:</b></label><br>
+                <button class="ctrl-btn" onclick="setFont('gothic')">기본고딕</button>
+                <button class="ctrl-btn" onclick="setFont('pixel')">픽셀</button>
+                <button class="ctrl-btn" onclick="setFont('round')">둥근느낌</button>
+                <button class="ctrl-btn" onclick="setFont('bold')">볼드체</button>
+            </div>
+            <div>
+                <label><b>디데이 설정:</b> <input type="date" id="dday-input" onchange="updateDDay()"></label>
+            </div>
         </div>
+    </div>
+</div>
+
+<!-- 칭호/메달 모달 -->
+<div class="modal" id="badge-modal">
+    <div class="modal-body">
+        <h3>🏆 칭호 및 메달 보관함</h3>
+        <p style="text-align: left; font-size: 13px; line-height: 1.6;">
+            <b>보유 칭호:</b> #참을성 갑🪽, #출석의 달인🫰🏻<br>
+            <b>보유 메달:</b> [IRON🔨], [BRONZE🤎]
+        </p>
+        <button class="ctrl-btn" onclick="closeModal('badge-modal')">닫기</button>
     </div>
 </div>
 
@@ -351,9 +410,7 @@
     let timerRunning = false;
     let timerObj = null;
     let todos = [];
-    
-    // 날짜 조작용 변수
-    let currentDateObj = new Date(2026, 6, 23); // 2026.07.23
+    let currentDate = new Date(2026, 6, 23);
 
     function switchTab(name) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -362,16 +419,25 @@
         document.getElementById('tab-' + name).classList.add('active');
     }
 
-    // 날짜 이동 함수 (미래/과거 미리 작성 가능)
+    function setTheme(theme) {
+        document.body.className = document.body.className.replace(/theme-\w+/, 'theme-' + theme);
+    }
+
+    function setFont(font) {
+        document.body.className = document.body.className.replace(/font-\w+/, 'font-' + font);
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
     function changeDate(days) {
-        currentDateObj.setDate(currentDateObj.getDate() + days);
-        let y = currentDateObj.getFullYear();
-        let m = String(currentDateObj.getMonth() + 1).padStart(2, '0');
-        let d = String(currentDateObj.getDate()).padStart(2, '0');
+        currentDate.setDate(currentDate.getDate() + days);
+        let y = currentDate.getFullYear();
+        let m = String(currentDate.getMonth() + 1).padStart(2, '0');
+        let d = String(currentDate.getDate()).padStart(2, '0');
         document.getElementById('current-planner-date').innerText = `${y}.${m}.${d}`;
     }
 
-    // 타이머 및 표정 시스템
     function toggleTimer() {
         if(!timerRunning) {
             timerObj = setInterval(() => {
@@ -400,61 +466,24 @@
         let s = studySeconds % 60;
         document.getElementById('timer-screen').innerText = 
             `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        
-        document.getElementById('total-time').innerText = `${h}시간 ${m}분`;
-        
-        // 하루 공부 시간별 포우 표정 자동 반영 (0시😠 ~ 7시이상🫪)
+        document.getElementById('total-time').innerText = h + '시간';
+
         let exprs = ['😠', '😅', '😉', '☺️', '😚', '🥰', '🥹', '🫪'];
         let idx = h > 7 ? 7 : h;
         document.getElementById('pou-face-expression').innerText = exprs[idx];
     }
 
-    // 백색소음 웹 오디오 API를 통한 실제 소리 구현 (노이즈 생성)
-    let audioCtx = null;
-    let noiseNode = null;
-
-    function setNoise(type) {
-        if(type === 'none') {
-            if(audioCtx) { audioCtx.close(); audioCtx = null; }
-            return;
-        }
-        try {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            let bufferSize = 2 * audioCtx.sampleRate;
-            let noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            let output = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = Math.random() * 2 - 1;
-            }
-            noiseNode = audioCtx.createBufferSource();
-            noiseNode.buffer = noiseBuffer;
-            noiseNode.loop = true;
-
-            let filter = audioCtx.createBiquadFilter();
-            filter.type = type === 'pencil' ? 'highpass' : 'lowpass';
-            filter.frequency.value = type === 'pencil' ? 1000 : 400;
-
-            noiseNode.connect(filter);
-            filter.connect(audioCtx.destination);
-            noiseNode.start(0);
-        } catch(e) {
-            console.log("Audio not allowed yet");
-        }
-    }
-
-    // 할일 추가 및 완료시 아래로 내리기 + 애니메이션
     function addTodo() {
-        let select = document.getElementById('subject-select').value;
-        let txt = document.getElementById('todo-input-text').value;
-        if(!txt) return;
-        todos.push({subject: select, text: txt, done: false});
+        let subject = document.getElementById('subject-select').value;
+        let text = document.getElementById('todo-input-text').value;
+        if(!text) return;
+        todos.push({subject, text, done: false});
         document.getElementById('todo-input-text').value = '';
         renderTodos();
     }
 
     function toggleTodo(i) {
         todos[i].done = !todos[i].done;
-        // 완료한 항목은 아래로 정렬
         todos.sort((a, b) => a.done - b.done);
         renderTodos();
     }
@@ -468,7 +497,7 @@
             container.innerHTML += `
                 <div class="todo-item ${t.done ? 'done' : ''}">
                     <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${i})">
-                    <span style="font-weight:bold; color:#555;">[${t.subject}]</span>
+                    <b>[${t.subject}]</b>
                     <span>${t.text}</span>
                 </div>
             `;
@@ -478,7 +507,7 @@
     }
 
     function updateDDay() {
-        let val = document.getElementById('dday-date-input').value;
+        let val = document.getElementById('dday-input').value;
         if(!val) return;
         let diff = Math.ceil((new Date(val) - new Date()) / (1000*60*60*24));
         document.getElementById('d-day-view').innerText = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
