@@ -2,181 +2,388 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>PLANA : Pou Edition</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLANA</title>
     <style>
         :root {
-            --bg-main: #f0f4f8; --card-bg: #ffffff; --primary: #7c9473;
-            --primary-light: #e8fee4; --text-dark: #2d3748; --text-gray: #a0aec0;
-            --border-color: #edf2f7; --accent: #f6ad55; --pou-body: #cfb997;
+            --bg-color: #eaf3f0;
+            /* 점 크기 2배, 흐리게, 간격 넓게 수정 */
+            --dot-color: rgba(143, 163, 153, 0.25);
+            --main-border: #4a5851;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
-        body { background-color: var(--bg-main); color: var(--text-dark); display: flex; justify-content: center; height: 100vh; overflow: hidden; }
-        .app-container { width: 100%; max-width: 480px; background: var(--card-bg); height: 100%; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        .header { padding: 20px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-        .tab-content { flex: 1; overflow-y: auto; padding: 10px 20px 80px; display: none; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(var(--dot-color) 3px, transparent 3px);
+            background-size: 32px 32px;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* 화면 4등분 중 최상단 1/4 구역 선 정의 */
+        .top-quarter {
+            border-bottom: 2px solid var(--main-border);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .left-info {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* 1/4 부분 중간 지점 (총 시간 + 날짜) */
+        .center-time-box {
+            text-align: center;
+        }
+
+        .center-time-box h1 {
+            font-size: 40px;
+            margin: 0;
+            font-weight: 800;
+            font-family: monospace;
+        }
+
+        .center-time-box .date-str {
+            font-size: 12px;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        /* 포우 캐릭터 (오른쪽 배치) */
+        .pou-container {
+            text-align: center;
+        }
+
+        .pou-name-tag {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .pou-avatar {
+            width: 55px;
+            height: 48px;
+            background: #ab8d62;
+            border-radius: 50% 50% 45% 45%;
+            margin: 0 auto;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .pou-eye {
+            width: 11px;
+            height: 11px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 13px;
+            border: 1px solid #333;
+        }
+        .pou-eye.left { left: 11px; }
+        .pou-eye.right { right: 11px; }
+
+        .pou-pupil {
+            width: 4px;
+            height: 4px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+        }
+
+        .pou-mouth {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+        }
+
+        /* 하단 3/4 영역 (체크리스트 및 탭) */
+        .nav-tabs {
+            display: flex;
+            border: 1px solid var(--main-border);
+            background: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 0;
+            text-align: center;
+            background: none;
+            border: none;
+            border-right: 1px solid var(--main-border);
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tab-btn:last-child { border-right: none; }
+        .tab-btn.active { background: white; border-bottom: 3px solid var(--main-border); }
+
+        .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .pou-card { background: linear-gradient(135deg, #eef2f5 0%, #e6ebd9 100%); border-radius: 24px; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.8); }
-        .pou-status { width: 100%; display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: bold; color: #5a6b52; }
-        .pou-stage { background: rgba(255,255,255,0.6); padding: 4px 12px; border-radius: 12px; }
-        .pou-container { width: 140px; height: 120px; position: relative; display: flex; justify-content: center; align-items: flex-end; margin: 15px 0; }
-        .pou { width: 120px; height: 100px; background-color: var(--pou-body); border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%; position: relative; transition: all 0.3s ease; box-shadow: inset -8px -8px 0 rgba(0,0,0,0.1), 0 8px 15px rgba(0,0,0,0.08); cursor: pointer; }
-        .pou:active { transform: scale(0.95); }
-        .pou-eye { width: 18px; height: 24px; background: white; border-radius: 50%; position: absolute; top: 30px; display: flex; justify-content: center; align-items: center; }
-        .pou-eye.left { left: 30px; } .pou-eye.right { right: 30px; }
-        .pou-pupil { width: 8px; height: 10px; background: #222; border-radius: 50%; }
-        .pou-mouth { width: 20px; height: 8px; border-bottom: 3px solid #4a3b32; border-radius: 0 0 10px 10px; position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); }
-        .exp-bar-container { width: 100%; height: 12px; background: rgba(0,0,0,0.05); border-radius: 6px; overflow: hidden; }
-        .exp-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s ease; }
-        .timer-display { font-size: 48px; font-weight: 800; text-align: center; margin: 20px 0; font-variant-numeric: tabular-nums; color: var(--text-dark); }
-        .timer-controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
-        .btn { padding: 12px 28px; border-radius: 16px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background: var(--primary); color: white; } .btn-primary:active { transform: scale(0.95); }
-        .btn-secondary { background: var(--border-color); color: var(--text-dark); }
-        .todo-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .todo-input { flex: 1; border: 2px solid var(--border-color); padding: 12px 16px; border-radius: 14px; font-size: 15px; outline: none; }
-        .todo-input:focus { border-color: var(--primary); }
-        .todo-list { list-style: none; }
-        .todo-item { display: flex; align-items: center; padding: 12px 16px; background: var(--bg-main); border-radius: 14px; margin-bottom: 10px; transition: all 0.2s; }
-        .todo-item.completed { opacity: 0.5; text-decoration: line-through; }
-        .todo-checkbox { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--primary); margin-right: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .todo-checkbox i { color: white; font-size: 12px; display: none; }
-        .todo-item.completed .todo-checkbox { background: var(--primary); }
-        .todo-item.completed .todo-checkbox i { display: block; }
-        .todo-text { flex: 1; font-size: 15px; font-weight: 500; }
-        .nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: white; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); cursor: pointer; font-size: 12px; font-weight: 600; }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
-        .nav-item.active { color: var(--primary); }
+
+        /* 직사각형 선 기반 달력 및 리스트 */
+        .rect-box {
+            border: 1px solid var(--main-border);
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .todo-input-row {
+            display: flex;
+            border: 1px solid var(--main-border);
+            background: white;
+            margin-bottom: 10px;
+        }
+        .todo-input-row select, .todo-input-row input {
+            border: none;
+            padding: 8px;
+            outline: none;
+            background: transparent;
+            font-size: 13px;
+        }
+        .todo-input-row input { flex: 1; }
+        .add-btn {
+            border-left: 1px solid var(--main-border);
+            background: #f0f0f0;
+            padding: 0 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 8px 4px;
+            font-size: 13px;
+            gap: 10px;
+        }
+        .todo-item.done span {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .todo-item span { flex: 1; }
+
+        .sub-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .control-btn {
+            border: 1px solid var(--main-border);
+            background: white;
+            padding: 3px 8px;
+            cursor: pointer;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header">
-            <h1>PLANA</h1>
-            <div id="date-display" style="color: var(--text-gray); font-size: 14px; font-weight: 600;"></div>
+
+<div class="container">
+    <!-- 1. 상단 4분의 1 구역 (선으로 분리) -->
+    <div class="top-quarter">
+        <div class="left-info">
+            <div>⏱️ 누적 시간: <b id="total-time">0시간</b></div>
+            <div>📅 누적 출석: <b id="total-days">1일</b></div>
+            <div>🎯 D-Day: <b id="d-day-view">설정 필요</b></div>
+            <button class="control-btn" style="margin-top:4px;" onclick="alert('칭호/메달 보관함 열림')">🏆 칭호함</button>
         </div>
 
-        <!-- TAB 1: POU & TIMER -->
-        <div id="tab-timer" class="tab-content active">
-            <div class="pou-card">
-                <div class="pou-status">
-                    <span id="pou-level-name" class="pou-stage">Baby Pou</span>
-                    <span>Lv.<span id="pou-level">1</span></span>
-                </div>
-                <div class="pou-container">
-                    <div class="pou" id="pou-character" onclick="petPou()">
-                        <div class="pou-eye left"><div class="pou-pupil"></div></div>
-                        <div class="pou-eye right"><div class="pou-pupil"></div></div>
-                        <div class="pou-mouth"></div>
-                    </div>
-                </div>
-                <div class="exp-bar-container">
-                    <div class="exp-bar" id="exp-bar"></div>
-                </div>
-            </div>
-
-            <div class="timer-display" id="timer-display">25:00</div>
-            <div class="timer-controls">
-                <button class="btn btn-primary" id="start-btn" onclick="toggleTimer()">시작</button>
-                <button class="btn btn-secondary" onclick="resetTimer()">리셋</button>
-            </div>
+        <div class="center-time-box">
+            <h1 id="timer-screen">00:00:00</h1>
+            <div class="date-str" id="today-date-str">2026.07.23.(목)</div>
         </div>
 
-        <!-- TAB 2: TODO -->
-        <div id="tab-todo" class="tab-content">
-            <div class="todo-input-group">
-                <input type="text" id="todo-input" class="todo-input" placeholder="오늘 할 일을 입력하세요..." onkeypress="handleKeyPress(event)">
-                <button class="btn btn-primary" onclick="addTodo()">추가</button>
+        <div class="pou-container">
+            <div class="pou-name-tag" id="pou-full-title">· 아기 포우 ·</div>
+            <div class="pou-avatar">
+                <div class="pou-eye left"><div class="pou-pupil"></div></div>
+                <div class="pou-eye right"><div class="pou-pupil"></div></div>
+                <div class="pou-mouth" id="pou-face-expression">😠</div>
             </div>
-            <ul class="todo-list" id="todo-list"></ul>
-        </div>
-
-        <!-- NAV -->
-        <div class="nav-bar">
-            <div class="nav-item active" onclick="switchTab('timer', this)"><i class="fa-solid fa-stopwatch"></i>타이머</div>
-            <div class="nav-item" onclick="switchTab('todo', this)"><i class="fa-solid fa-list-check"></i>할 일</div>
         </div>
     </div>
 
-    <script>
-        let timer, timeLeft = 1500, isRunning = false;
-        let exp = 0, level = 1, todos = [];
-        const stages = ["Baby Pou", "Kid Pou", "Teen Pou", "Master Pou"];
+    <!-- 2. 하단 3/4 구역 (탭 메뉴) -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('daily')">일일 플래너</button>
+        <button class="tab-btn" onclick="switchTab('timer')">타이머/백색소음</button>
+        <button class="tab-btn" onclick="switchTab('calendar')">월간 달력</button>
+        <button class="tab-btn" onclick="switchTab('stats')">통계</button>
+        <button class="tab-btn" onclick="switchTab('settings')">설정</button>
+    </div>
 
-        document.getElementById('date-display').innerText = new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' });
+    <!-- 일일 플래너 탭 -->
+    <div id="tab-daily" class="tab-content active">
+        <div class="sub-bar">
+            <div>
+                <button class="control-btn">&lt; 이전</button>
+                <span id="current-planner-date">2026.07.23</span>
+                <button class="control-btn">다음 &gt;</button>
+            </div>
+            <div>목표 달성률: <span id="achievement-rate">0%</span></div>
+        </div>
 
-        function switchTab(tab, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            el.classList.add('active');
+        <div class="todo-input-row">
+            <select id="subject-select"><option>공부</option><option>기타</option></select>
+            <input type="text" id="todo-input-text" placeholder="오늘 할 일을 입력하세요..." onkeypress="if(event.key==='Enter') addTodo()">
+            <button class="add-btn" onclick="addTodo()">추가</button>
+        </div>
+
+        <div class="rect-box" id="todo-list-container" style="min-height: 250px;">
+            <!-- 체크리스트 목록 -->
+        </div>
+    </div>
+
+    <!-- 타이머 탭 -->
+    <div id="tab-timer" class="tab-content">
+        <div class="rect-box" style="text-align: center;">
+            <h3>타이머 모드</h3>
+            <button class="control-btn" style="padding: 10px 20px; font-weight:bold;" onclick="toggleTimer()" id="timer-btn">시작</button>
+            <button class="control-btn" style="padding: 10px 20px;" onclick="resetTimer()">리셋</button>
+            <hr style="margin: 20px 0; border:0; border-top:1px solid #ccc;">
+            <h3>백색소음 (무소음 기본)</h3>
+            <label><input type="name" name="noise"> 무소음</label> &nbsp;
+            <label><input type="radio" name="noise"> 타이핑소리</label> &nbsp;
+            <label><input type="radio" name="noise"> 연필사각소리</label> &nbsp;
+            <label><input type="radio" name="noise"> BGM+거리소음</label>
+        </div>
+    </div>
+
+    <!-- 월간 달력 탭 -->
+    <div id="tab-calendar" class="tab-content">
+        <div class="rect-box">
+            <h3>월간 달력 (직사각형 직관적 구성)</h3>
+            <div style="text-align: center; padding: 30px; color: #666;">2026년 7월 달력 영역</div>
+        </div>
+    </div>
+
+    <!-- 통계 탭 -->
+    <div id="tab-stats" class="tab-content">
+        <div class="rect-box">
+            <h3>학습 통계</h3>
+            <p>과목별 원 그래프 및 주간/월간 성장 기록</p>
+        </div>
+    </div>
+
+    <!-- 설정 탭 -->
+    <div id="tab-settings" class="tab-content">
+        <div class="rect-box">
+            <h3>환경 설정 및 D-Day</h3>
+            <label>디데이 날짜: <input type="date" id="dday-date-input" onchange="updateDDay()"></label>
+        </div>
+    </div>
+</div>
+
+<script>
+    let studySeconds = 0;
+    let timerRunning = false;
+    let timerObj = null;
+    let todos = [];
+
+    function switchTab(name) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+
+    function toggleTimer() {
+        if(!timerRunning) {
+            timerObj = setInterval(() => {
+                studySeconds++;
+                updateTimerUI();
+            }, 1000);
+            document.getElementById('timer-btn').innerText = '일시정지';
+        } else {
+            clearInterval(timerObj);
+            document.getElementById('timer-btn').innerText = '시작';
         }
+        timerRunning = !timerRunning;
+    }
 
-        function toggleTimer() {
-            const btn = document.getElementById('start-btn');
-            if (isRunning) {
-                clearInterval(timer); isRunning = false; btn.innerText = '시작';
-            } else {
-                isRunning = true; btn.innerText = '일시정지';
-                timer = setInterval(() => {
-                    if (timeLeft > 0) { timeLeft--; updateTimerDisplay(); }
-                    else { clearInterval(timer); isRunning = false; btn.innerText = '시작'; addExp(50); alert('집중 완료! 포우가 성장했습니다!'); resetTimer(); }
-                }, 1000);
-            }
-        }
+    function resetTimer() {
+        clearInterval(timerObj);
+        studySeconds = 0;
+        timerRunning = false;
+        document.getElementById('timer-btn').innerText = '시작';
+        updateTimerUI();
+    }
 
-        function resetTimer() { clearInterval(timer); isRunning = false; timeLeft = 1500; updateTimerDisplay(); document.getElementById('start-btn').innerText = '시작'; }
-        function updateTimerDisplay() {
-            let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-            document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
+    function updateTimerUI() {
+        let h = Math.floor(studySeconds / 3600);
+        let m = Math.floor((studySeconds % 3600) / 60);
+        let s = studySeconds % 60;
+        document.getElementById('timer-screen').innerText = 
+            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        
+        // 시간대별 포우 표정 자동 변경 (0시😠, 1시😅, 2시😉, 3시☺️, 4시😚, 5시🥰, 6시🥹, 7시이상🫪)
+        let exprs = ['😠', '😅', '😉', '☺️', '😚', '🥰', '🥹', '🫪'];
+        let idx = h > 7 ? 7 : h;
+        document.getElementById('pou-face-expression').innerText = exprs[idx];
+        document.getElementById('total-time').innerText = h + '시간';
+    }
 
-        function addExp(pts) {
-            exp += pts;
-            if (exp >= 100) { level++; exp -= 100; updatePouStage(); }
-            document.getElementById('pou-level').innerText = level;
-            document.getElementById('exp-bar').style.width = `${exp}%`;
-        }
+    function addTodo() {
+        let txt = document.getElementById('todo-input-text').value;
+        if(!txt) return;
+        todos.push({text: txt, done: false});
+        document.getElementById('todo-input-text').value = '';
+        renderTodos();
+    }
 
-        function updatePouStage() {
-            let idx = Math.min(Math.floor((level - 1) / 3), stages.length - 1);
-            document.getElementById('pou-level-name').innerText = stages[idx];
-            document.getElementById('pou-character').style.transform = `scale(${1 + idx * 0.15})`;
-        }
+    function toggleTodo(i) {
+        todos[i].done = !todos[i].done;
+        // 완료한 일을 맨 아래로 정렬
+        todos.sort((a, b) => a.done - b.done);
+        renderTodos();
+    }
 
-        function petPou() {
-            const pou = document.getElementById('pou-character');
-            pou.style.transform = `${pou.style.transform || ''} translateY(-10px)`;
-            setTimeout(() => updatePouStage(), 200);
-        }
+    function renderTodos() {
+        let container = document.getElementById('todo-list-container');
+        container.innerHTML = '';
+        let doneCnt = 0;
+        todos.forEach((t, i) => {
+            if(t.done) doneCnt++;
+            container.innerHTML += `
+                <div class="todo-item ${t.done ? 'done' : ''}">
+                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${i})">
+                    <span>${t.text}</span>
+                </div>
+            `;
+        });
+        let rate = todos.length === 0 ? 0 : Math.round((doneCnt / todos.length) * 100);
+        document.getElementById('achievement-rate').innerText = rate + '%';
+    }
 
-        function addTodo() {
-            const input = document.getElementById('todo-input');
-            if (!input.value.trim()) return;
-            todos.push({ text: input.value, done: false });
-            input.value = ''; renderTodos();
-        }
-
-        function handleKeyPress(e) { if (e.key === 'Enter') addTodo(); }
-        function toggleTodo(i) {
-            todos[i].done = !todos[i].done;
-            if (todos[i].done) addExp(15);
-            renderTodos();
-        }
-
-        function renderTodos() {
-            const list = document.getElementById('todo-list');
-            list.innerHTML = '';
-            todos.forEach((todo, i) => {
-                list.innerHTML += `<li class="todo-item ${todo.done ? 'completed' : ''}">
-                    <div class="todo-checkbox" onclick="toggleTodo(${i})"><i class="fa-solid fa-check"></i></div>
-                    <span class="todo-text">${todo.text}</span>
-                </li>`;
-            });
-        }
-    </script>
+    function updateDDay() {
+        let val = document.getElementById('dday-date-input').value;
+        if(!val) return;
+        let diff = Math.ceil((new Date(val) - new Date()) / (1000*60*60*24));
+        document.getElementById('d-day-view').innerText = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
+    }
+</script>
 </body>
 </html>
