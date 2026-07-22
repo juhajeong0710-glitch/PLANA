@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLANA</title>
+    <title>PLANA (플래나)</title>
     <style>
         :root {
             --bg-color: #eaf3f0;
-            /* 점 크기 2배, 흐리게, 간격 넓게 수정 */
             --dot-color: rgba(143, 163, 153, 0.25);
             --main-border: #4a5851;
         }
@@ -24,15 +23,15 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
-            padding: 10px;
+            padding: 15px;
         }
 
-        /* 화면 4등분 중 최상단 1/4 구역 선 정의 */
+        /* 1/4 상단 영역 (선으로 분리) */
         .top-quarter {
             border-bottom: 2px solid var(--main-border);
-            padding-bottom: 15px;
+            padding-bottom: 12px;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
@@ -41,19 +40,19 @@
 
         .left-info {
             font-size: 12px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        /* 1/4 부분 중간 지점 (총 시간 + 날짜) */
         .center-time-box {
             text-align: center;
         }
 
         .center-time-box h1 {
-            font-size: 40px;
+            font-size: 42px;
             margin: 0;
             font-weight: 800;
             font-family: monospace;
+            letter-spacing: 1px;
         }
 
         .center-time-box .date-str {
@@ -62,7 +61,7 @@
             margin-top: 2px;
         }
 
-        /* 포우 캐릭터 (오른쪽 배치) */
+        /* 푸우 캐릭터 및 얼굴 커스텀 */
         .pou-container {
             text-align: center;
         }
@@ -70,30 +69,31 @@
         .pou-name-tag {
             font-size: 11px;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .pou-avatar {
-            width: 55px;
-            height: 48px;
+            width: 60px;
+            height: 52px;
             background: #ab8d62;
             border-radius: 50% 50% 45% 45%;
             margin: 0 auto;
             position: relative;
             border: 2px solid #333;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
 
         .pou-eye {
-            width: 11px;
-            height: 11px;
+            width: 12px;
+            height: 12px;
             background: white;
             border-radius: 50%;
             position: absolute;
-            top: 13px;
+            top: 15px;
             border: 1px solid #333;
         }
-        .pou-eye.left { left: 11px; }
-        .pou-eye.right { right: 11px; }
+        .pou-eye.left { left: 12px; }
+        .pou-eye.right { right: 12px; }
 
         .pou-pupil {
             width: 4px;
@@ -110,20 +110,20 @@
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 14px;
+            font-size: 15px;
         }
 
-        /* 하단 3/4 영역 (체크리스트 및 탭) */
+        /* 탭 메뉴 (직사각형 선 구조) */
         .nav-tabs {
             display: flex;
             border: 1px solid var(--main-border);
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.7);
             margin-bottom: 15px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 8px 0;
+            padding: 9px 0;
             text-align: center;
             background: none;
             border: none;
@@ -138,7 +138,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* 직사각형 선 기반 달력 및 리스트 */
+        /* 직사각형 박스 스타일 */
         .rect-box {
             border: 1px solid var(--main-border);
             background: white;
@@ -146,35 +146,39 @@
             margin-bottom: 10px;
         }
 
-        .todo-input-row {
+        /* 입력 및 컨트롤 바 */
+        .input-row {
             display: flex;
             border: 1px solid var(--main-border);
             background: white;
             margin-bottom: 10px;
         }
-        .todo-input-row select, .todo-input-row input {
+        .input-row select, .input-row input {
             border: none;
-            padding: 8px;
+            padding: 9px;
             outline: none;
             background: transparent;
             font-size: 13px;
         }
-        .todo-input-row input { flex: 1; }
+        .input-row input { flex: 1; }
         .add-btn {
             border-left: 1px solid var(--main-border);
             background: #f0f0f0;
-            padding: 0 15px;
+            padding: 0 16px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 12px;
         }
 
         .todo-item {
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #ccc;
-            padding: 8px 4px;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 9px 5px;
             font-size: 13px;
             gap: 10px;
+            background: white;
+            transition: all 0.3s;
         }
         .todo-item.done span {
             text-decoration: line-through;
@@ -193,22 +197,37 @@
         .control-btn {
             border: 1px solid var(--main-border);
             background: white;
-            padding: 3px 8px;
+            padding: 4px 10px;
             cursor: pointer;
             font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* 통계 원그래프 및 과목별 바 */
+        .stat-flex {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .pie-chart-mock {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#4a5851 0deg 200deg, #8fa399 200deg 320deg, #d0ded8 320deg 360deg);
+            border: 2px solid var(--main-border);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 1. 상단 4분의 1 구역 (선으로 분리) -->
+    <!-- 1. 상단 1/4 구역 (선으로 분리, 총시간, 날짜, 포우) -->
     <div class="top-quarter">
         <div class="left-info">
-            <div>⏱️ 누적 시간: <b id="total-time">0시간</b></div>
+            <div>⏱️ 누적 시간: <b id="total-time">0시간 0분</b></div>
             <div>📅 누적 출석: <b id="total-days">1일</b></div>
-            <div>🎯 D-Day: <b id="d-day-view">설정 필요</b></div>
-            <button class="control-btn" style="margin-top:4px;" onclick="alert('칭호/메달 보관함 열림')">🏆 칭호함</button>
+            <div>🎯 D-Day: <b id="d-day-view">미설정</b></div>
+            <button class="control-btn" style="margin-top:4px;" onclick="alert('🏆 칭호 보관함: [시작이 반] 획득!')">🏆 칭호함</button>
         </div>
 
         <div class="center-time-box">
@@ -226,7 +245,7 @@
         </div>
     </div>
 
-    <!-- 2. 하단 3/4 구역 (탭 메뉴) -->
+    <!-- 2. 하단 3/4 구역 탭 메뉴 -->
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('daily')">일일 플래너</button>
         <button class="tab-btn" onclick="switchTab('timer')">타이머/백색소음</button>
@@ -239,60 +258,90 @@
     <div id="tab-daily" class="tab-content active">
         <div class="sub-bar">
             <div>
-                <button class="control-btn">&lt; 이전</button>
-                <span id="current-planner-date">2026.07.23</span>
-                <button class="control-btn">다음 &gt;</button>
+                <button class="control-btn" onclick="changeDate(-1)">&lt; 이전</button>
+                <span id="current-planner-date" style="margin: 0 8px;">2026.07.23</span>
+                <button class="control-btn" onclick="changeDate(1)">다음 &gt;</button>
             </div>
             <div>목표 달성률: <span id="achievement-rate">0%</span></div>
         </div>
 
-        <div class="todo-input-row">
-            <select id="subject-select"><option>공부</option><option>기타</option></select>
+        <div class="input-row">
+            <select id="subject-select">
+                <option value="국어">국어</option>
+                <option value="수학">수학</option>
+                <option value="영어">영어</option>
+                <option value="탐구">탐구</option>
+                <option value="기타">기타</option>
+            </select>
             <input type="text" id="todo-input-text" placeholder="오늘 할 일을 입력하세요..." onkeypress="if(event.key==='Enter') addTodo()">
             <button class="add-btn" onclick="addTodo()">추가</button>
         </div>
 
-        <div class="rect-box" id="todo-list-container" style="min-height: 250px;">
-            <!-- 체크리스트 목록 -->
+        <div class="rect-box" id="todo-list-container" style="min-height: 260px;">
+            <!-- 체크리스트 항목들 -->
         </div>
     </div>
 
-    <!-- 타이머 탭 -->
+    <!-- 타이머 / 백색소음 탭 -->
     <div id="tab-timer" class="tab-content">
-        <div class="rect-box" style="text-align: center;">
-            <h3>타이머 모드</h3>
-            <button class="control-btn" style="padding: 10px 20px; font-weight:bold;" onclick="toggleTimer()" id="timer-btn">시작</button>
-            <button class="control-btn" style="padding: 10px 20px;" onclick="resetTimer()">리셋</button>
-            <hr style="margin: 20px 0; border:0; border-top:1px solid #ccc;">
-            <h3>백색소음 (무소음 기본)</h3>
-            <label><input type="name" name="noise"> 무소음</label> &nbsp;
-            <label><input type="radio" name="noise"> 타이핑소리</label> &nbsp;
-            <label><input type="radio" name="noise"> 연필사각소리</label> &nbsp;
-            <label><input type="radio" name="noise"> BGM+거리소음</label>
+        <div class="rect-box" style="text-align: center; padding: 30px;">
+            <h3>⏱️ 스터디 타이머 (포모도로 / 자유 선택)</h3>
+            <div style="margin: 15px 0;">
+                모드: 
+                <select id="timer-mode-select" style="padding: 5px;">
+                    <option value="free">자유 타이머</option>
+                    <option value="pomodoro">포모도로 (25분 집중 / 5분 휴식)</option>
+                </select>
+            </div>
+            <button class="control-btn" style="padding: 12px 30px; font-size: 15px; font-weight:bold;" onclick="toggleTimer()" id="timer-btn">시작</button>
+            <button class="control-btn" style="padding: 12px 20px; font-size: 15px;" onclick="resetTimer()">리셋</button>
+            
+            <hr style="margin: 25px 0; border:0; border-top:1px solid #ccc;">
+            
+            <h3>🎧 백색소음 (진짜 오디오 재생)</h3>
+            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+                <label><input type="radio" name="noise" onclick="setNoise('none')" checked> 무소음</label>
+                <label><input type="radio" name="noise" onclick="setNoise('typing')"> ⌨️ 타이핑소리</label>
+                <label><input type="radio" name="noise" onclick="setNoise('pencil')"> ✏️ 연필사각소리</label>
+                <label><input type="radio" name="noise" onclick="setNoise('bgm')"> ☕ BGM+거리소음</label>
+            </div>
         </div>
     </div>
 
     <!-- 월간 달력 탭 -->
     <div id="tab-calendar" class="tab-content">
         <div class="rect-box">
-            <h3>월간 달력 (직사각형 직관적 구성)</h3>
-            <div style="text-align: center; padding: 30px; color: #666;">2026년 7월 달력 영역</div>
+            <h3>🗓️ 월간 달력 (미래 날짜 미리 작성 가능)</h3>
+            <div style="padding: 25px; text-align: center; background: #fafafa; border: 1px solid #ddd; margin-top: 10px;">
+                2026년 7월 달력 그리드 (직사각형 격자 구조)
+            </div>
         </div>
     </div>
 
     <!-- 통계 탭 -->
     <div id="tab-stats" class="tab-content">
         <div class="rect-box">
-            <h3>학습 통계</h3>
-            <p>과목별 원 그래프 및 주간/월간 성장 기록</p>
+            <h3>📊 과목별 학습 통계 & 원 그래프</h3>
+            <div class="stat-flex" style="margin-top: 15px;">
+                <div class="pie-chart-mock" title="과목별 비율 원그래프"></div>
+                <div>
+                    <p><b>📚 과목별 누적 시간:</b></p>
+                    <ul id="subject-stat-list" style="line-height: 1.8; font-size: 13px;">
+                        <li>국어: 0시간 (0%)</li>
+                        <li>수학: 0시간 (0%)</li>
+                        <li>영어: 0시간 (0%)</li>
+                        <li>탐구: 0시간 (0%)</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- 설정 탭 -->
     <div id="tab-settings" class="tab-content">
         <div class="rect-box">
-            <h3>환경 설정 및 D-Day</h3>
-            <label>디데이 날짜: <input type="date" id="dday-date-input" onchange="updateDDay()"></label>
+            <h3>⚙️ 환경 설정 및 D-Day</h3>
+            <label>디데이 목표일: <input type="date" id="dday-date-input" onchange="updateDDay()"></label>
         </div>
     </div>
 </div>
@@ -302,6 +351,9 @@
     let timerRunning = false;
     let timerObj = null;
     let todos = [];
+    
+    // 날짜 조작용 변수
+    let currentDateObj = new Date(2026, 6, 23); // 2026.07.23
 
     function switchTab(name) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -310,6 +362,16 @@
         document.getElementById('tab-' + name).classList.add('active');
     }
 
+    // 날짜 이동 함수 (미래/과거 미리 작성 가능)
+    function changeDate(days) {
+        currentDateObj.setDate(currentDateObj.getDate() + days);
+        let y = currentDateObj.getFullYear();
+        let m = String(currentDateObj.getMonth() + 1).padStart(2, '0');
+        let d = String(currentDateObj.getDate()).padStart(2, '0');
+        document.getElementById('current-planner-date').innerText = `${y}.${m}.${d}`;
+    }
+
+    // 타이머 및 표정 시스템
     function toggleTimer() {
         if(!timerRunning) {
             timerObj = setInterval(() => {
@@ -339,24 +401,60 @@
         document.getElementById('timer-screen').innerText = 
             `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         
-        // 시간대별 포우 표정 자동 변경 (0시😠, 1시😅, 2시😉, 3시☺️, 4시😚, 5시🥰, 6시🥹, 7시이상🫪)
+        document.getElementById('total-time').innerText = `${h}시간 ${m}분`;
+        
+        // 하루 공부 시간별 포우 표정 자동 반영 (0시😠 ~ 7시이상🫪)
         let exprs = ['😠', '😅', '😉', '☺️', '😚', '🥰', '🥹', '🫪'];
         let idx = h > 7 ? 7 : h;
         document.getElementById('pou-face-expression').innerText = exprs[idx];
-        document.getElementById('total-time').innerText = h + '시간';
     }
 
+    // 백색소음 웹 오디오 API를 통한 실제 소리 구현 (노이즈 생성)
+    let audioCtx = null;
+    let noiseNode = null;
+
+    function setNoise(type) {
+        if(type === 'none') {
+            if(audioCtx) { audioCtx.close(); audioCtx = null; }
+            return;
+        }
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let bufferSize = 2 * audioCtx.sampleRate;
+            let noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            let output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+
+            let filter = audioCtx.createBiquadFilter();
+            filter.type = type === 'pencil' ? 'highpass' : 'lowpass';
+            filter.frequency.value = type === 'pencil' ? 1000 : 400;
+
+            noiseNode.connect(filter);
+            filter.connect(audioCtx.destination);
+            noiseNode.start(0);
+        } catch(e) {
+            console.log("Audio not allowed yet");
+        }
+    }
+
+    // 할일 추가 및 완료시 아래로 내리기 + 애니메이션
     function addTodo() {
+        let select = document.getElementById('subject-select').value;
         let txt = document.getElementById('todo-input-text').value;
         if(!txt) return;
-        todos.push({text: txt, done: false});
+        todos.push({subject: select, text: txt, done: false});
         document.getElementById('todo-input-text').value = '';
         renderTodos();
     }
 
     function toggleTodo(i) {
         todos[i].done = !todos[i].done;
-        // 완료한 일을 맨 아래로 정렬
+        // 완료한 항목은 아래로 정렬
         todos.sort((a, b) => a.done - b.done);
         renderTodos();
     }
@@ -370,6 +468,7 @@
             container.innerHTML += `
                 <div class="todo-item ${t.done ? 'done' : ''}">
                     <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${i})">
+                    <span style="font-weight:bold; color:#555;">[${t.subject}]</span>
                     <span>${t.text}</span>
                 </div>
             `;
