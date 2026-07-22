@@ -3,515 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLANA (플래나)</title>
+    <title>나만의 커스텀 플래너</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
     <style>
-        /* 테마 정의 */
-        :root {
-            --bg-color: #eaf3f0;
-            --dot-color: rgba(143, 163, 153, 0.3);
-            --main-border: #4a5851;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-        }
-
-        body.theme-mint {
-            --bg-color: #eaf3f0;
-            --dot-color: rgba(143, 163, 153, 0.3);
-            --main-border: #4a5851;
-            --card-bg: #ffffff;
-        }
-        body.theme-pink {
-            --bg-color: #fae1e8;
-            --dot-color: rgba(219, 154, 175, 0.3);
-            --main-border: #8c5365;
-            --card-bg: #ffffff;
-        }
-        body.theme-brown {
-            --bg-color: #d7ccc8;
-            --dot-color: rgba(141, 110, 99, 0.3);
-            --main-border: #4e342e;
-            --card-bg: #efebe9;
-        }
-        body.theme-mute {
-            --bg-color: #4e433d;
-            --dot-color: rgba(110, 133, 115, 0.4);
-            --main-border: #a3b8a8;
-            --card-bg: #3e332e;
-            --text-color: #f5f5f5;
-        }
-
-        /* 폰트 정의 */
-        body.font-gothic { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
-        body.font-pixel { font-family: 'Courier New', Courier, monospace; }
-        body.font-round { font-family: 'Jua', 'Comic Sans MS', sans-serif; }
-        body.font-bold { font-family: 'Arial Black', Gadget, sans-serif; font-weight: bold; }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(var(--dot-color) 4px, transparent 4px);
-            background-size: 40px 40px;
-            color: var(--text-color);
+        * {
             box-sizing: border-box;
-            font-family: var(--font-family);
+            font-family: 'Gowun Dodum', sans-serif;
         }
-
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
+        body {
+            background-color: #e6f0ed;
+            background-image: radial-gradient(#b0c4bc 1.5px, transparent 1.5px);
+            background-size: 20px 20px;
+            margin: 0;
             padding: 20px;
-            background: var(--card-bg);
-            border: 2px solid var(--main-border);
-            box-shadow: 4px 4px 0px var(--main-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-
-        /* 상단 1/4 구역 디자인 */
-        .top-quarter {
-            border-bottom: 2px solid var(--main-border);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        /* 화면 비율에 맞고 모서리가 부드러운 직사각형 메인 컨테이너 */
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border: 3px solid #333333;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        /* 상단 상태바 */
+        .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
-
-        .left-info {
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .center-time-box {
-            text-align: center;
-        }
-
-        .center-time-box h1 {
-            font-size: 44px;
-            margin: 0;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        .center-time-box .date-str {
-            font-size: 13px;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        /* 푸우 캐릭터 디자인 (원형이 아닌 전용 형태) */
-        .pou-container {
-            text-align: center;
-        }
-
-        .pou-meta-info {
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .pou-avatar-wrap {
-            width: 65px;
-            height: 60px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .pou-body {
-            width: 55px;
-            height: 48px;
-            background: #ab8d62;
-            border-radius: 50% 50% 45% 45%;
-            position: absolute;
-            bottom: 0;
-            left: 5px;
-            border: 2px solid var(--main-border);
-        }
-
-        .pou-eye {
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 14px;
-            border: 1px solid #333;
-        }
-        .pou-eye.left { left: 12px; }
-        .pou-eye.right { right: 12px; }
-
-        .pou-pupil {
-            width: 3px;
-            height: 3px;
-            background: #333;
-            border-radius: 50%;
-            position: absolute;
-            top: 3px;
-            left: 3px;
-        }
-
-        .pou-expression {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
+        .user-info {
             font-size: 14px;
+            font-weight: bold;
+        }
+        /* 포우 아바타 실루엣 (이모지 없음, 항아리 형태) */
+        .pou-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pou-silhouette {
+            width: 45px;
+            height: 55px;
+            border: 2px solid #333;
+            border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+            transition: background 0.3s ease;
+        }
+        /* 5단계 색상 및 질감 클래스 */
+        .pou-level-0 { background: #1a1a1a; } /* 검정 */
+        .pou-level-1 { background: #888888; } /* 회색 */
+        .pou-level-2 { background: #ffffff; } /* 흰색 */
+        .pou-level-3 { background: linear-gradient(135deg, #ffffff 0%, #b0b0b0 50%, #6e6e6e 100%); } /* 은색 광택 */
+        .pou-level-4 { background: linear-gradient(135deg, #fff8e1 0%, #ffd700 50%, #cca100 100%); } /* 샴페인 골드 광택 */
+
+        /* 중앙 타이머 영역 */
+        .timer-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #333;
+        }
+        .timer-date {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .timer-btns {
+            margin-top: 10px;
+        }
+        .btn {
+            background: #fff;
+            border: 2px solid #333;
+            padding: 6px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0 4px;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: #333;
+            color: #fff;
         }
 
         /* 탭 메뉴 */
-        .nav-tabs {
+        .tab-menu {
             display: flex;
-            border: 2px solid var(--main-border);
-            background: rgba(255, 255, 255, 0.5);
+            justify-content: center;
+            gap: 10px;
             margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
         }
-
         .tab-btn {
-            flex: 1;
-            padding: 10px 0;
-            text-align: center;
             background: none;
-            border: none;
-            border-right: 2px solid var(--main-border);
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            color: var(--text-color);
-        }
-        .tab-btn:last-child { border-right: none; }
-        .tab-btn.active { background: var(--main-border); color: #fff; }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* 컴포넌트 박스 스타일 */
-        .content-box {
-            border: 2px solid var(--main-border);
-            background: var(--card-bg);
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        .input-row {
-            display: flex;
-            border: 2px solid var(--main-border);
-            background: var(--card-bg);
-            margin-bottom: 15px;
-        }
-        .input-row select, .input-row input {
-            border: none;
-            padding: 10px;
-            outline: none;
-            background: transparent;
-            font-size: 14px;
-            color: var(--text-color);
-        }
-        .input-row input { flex: 1; }
-        .add-btn {
-            border-left: 2px solid var(--main-border);
-            background: #eee;
-            padding: 0 20px;
+            border: 2px solid #333;
+            padding: 8px 20px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
         }
-
-        .todo-item {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px dashed var(--main-border);
-            padding: 10px 5px;
-            font-size: 14px;
-            gap: 12px;
+        .tab-btn.active {
+            background: #333;
+            color: #fff;
         }
-        .todo-item.done span {
-            text-decoration: line-through;
-            opacity: 0.6;
-        }
-        .todo-item span { flex: 1; }
 
-        .sub-bar {
+        /* 콘텐츠 패널 */
+        .panel {
+            display: none;
+        }
+        .panel.active {
+            display: block;
+        }
+
+        /* 월간 달력 스타일 */
+        .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        .calendar-day-name {
+            text-align: center;
+            font-weight: bold;
+            padding: 5px;
+        }
+        .calendar-date-box {
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            min-height: 80px;
+            padding: 8px;
+            background: #fafafa;
+            position: relative;
+        }
+        .calendar-date-box.today {
+            border-color: #333;
+            background: #fff;
+        }
+        .date-num {
             font-size: 14px;
             font-weight: bold;
         }
-        .ctrl-btn {
-            border: 2px solid var(--main-border);
-            background: var(--card-bg);
-            padding: 5px 12px;
+
+        /* 체크리스트 영역 */
+        .todo-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .todo-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
             cursor: pointer;
             font-size: 12px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        /* 통계 및 칭호 모달 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-body {
-            background: #fff;
-            padding: 25px;
-            border: 3px solid #4a5851;
-            width: 350px;
-            color: #333;
-            text-align: center;
         }
     </style>
 </head>
-<body class="theme-mint font-gothic">
+<body>
 
-<div class="container">
-    <!-- 상단 1/4 구역 -->
-    <div class="top-quarter">
-        <div class="left-info">
-            <div>⏱️ 누적: <b id="total-time">0시간</b> | 📅 출석: <b id="total-days">1일</b></div>
-            <div>🎯 D-Day: <b id="d-day-view">미설정</b></div>
-            <button class="ctrl-btn" style="margin-top:6px;" onclick="openModal('badge-modal')">🏆 칭호/메달함</button>
+<div class="main-container">
+    <!-- 상단 상태바 -->
+    <div class="status-bar">
+        <div class="user-info">
+            누적 시간: <span id="stat-hours">0시간</span> | 출석: <span id="stat-attendance">1일</span><br>
+            칭호: <span id="stat-titles">없음</span> | 메달: <span id="stat-medal">IRON</span>
         </div>
-
-        <div class="center-time-box">
-            <h1 id="timer-screen">00:00:00</h1>
-            <div class="date-str" id="today-date-str">2026.07.23.(목)</div>
-        </div>
-
         <div class="pou-container">
-            <div class="pou-meta-info" id="pou-full-title">[IRON🔨] 아기 포우</div>
-            <div class="pou-avatar-wrap">
-                <div class="pou-body">
-                    <div class="pou-eye left"><div class="pou-pupil"></div></div>
-                    <div class="pou-eye right"><div class="pou-pupil"></div></div>
-                    <div class="pou-expression" id="pou-face-expression">😠</div>
-                </div>
-            </div>
+            <span id="pou-badge-name">[IRON] 아기 포우</span>
+            <div id="pou-box" class="pou-silhouette pou-level-0"></div>
+        </div>
+    </div>
+
+    <!-- 타이머 섹션 -->
+    <div class="timer-section">
+        <div class="timer-display" id="timer-display">00:00:00</div>
+        <div class="timer-date" id="current-date-text">2026.07.23.(목)</div>
+        <div class="timer-btns">
+            <button class="btn" onclick="startTimer()">시작</button>
+            <button class="btn" onclick="stopTimer()">일시정지</button>
+            <button class="btn" onclick="addTestTime()">시간 임의추가(+1시간)</button>
         </div>
     </div>
 
     <!-- 탭 메뉴 -->
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('daily')">일일 플래너</button>
-        <button class="tab-btn" onclick="switchTab('timer')">타이머</button>
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="switchTab('todo')">일일 플래너</button>
         <button class="tab-btn" onclick="switchTab('calendar')">월간 달력</button>
-        <button class="tab-btn" onclick="switchTab('stats')">통계</button>
-        <button class="tab-btn" onclick="switchTab('settings')">설정</button>
     </div>
 
-    <!-- 일일 플래너 탭 -->
-    <div id="tab-daily" class="tab-content active">
-        <div class="sub-bar">
-            <div>
-                <button class="ctrl-btn" onclick="changeDate(-1)">&lt; 이전</button>
-                <span id="current-planner-date" style="margin: 0 10px;">2026.07.23</span>
-                <button class="ctrl-btn" onclick="changeDate(1)">다음 &gt;</button>
-            </div>
-            <div>목표 달성률: <span id="achievement-rate">0%</span></div>
+    <!-- 일일 플래너 패널 (체크리스트 + 삭제 기능) -->
+    <div id="panel-todo" class="panel active">
+        <h3>일일 체크리스트</h3>
+        <div class="todo-container">
+            <input type="text" id="todo-input" class="todo-input" placeholder="할 일을 입력하세요 (오타 시 삭제 가능)">
+            <button class="btn" onclick="addTodo()">추가</button>
         </div>
-
-        <div class="input-row">
-            <select id="subject-select">
-                <option value="국어">국어</option>
-                <option value="수학">수학</option>
-                <option value="영어">영어</option>
-                <option value="탐구">탐구</option>
-            </select>
-            <input type="text" id="todo-input-text" placeholder="오늘 할 일을 입력하세요..." onkeypress="if(event.key==='Enter') addTodo()">
-            <button class="add-btn" onclick="addTodo()">추가</button>
-        </div>
-
-        <div class="content-box" id="todo-list-container" style="min-height: 250px;">
-            <!-- 리스트 항목 -->
-        </div>
+        <ul id="todo-list" class="todo-list"></ul>
     </div>
 
-    <!-- 타이머 탭 -->
-    <div id="tab-timer" class="tab-content">
-        <div class="content-box" style="text-align: center; padding: 40px;">
-            <h3>스터디 타이머</h3>
-            <div style="margin: 15px 0;">
-                방식: 
-                <select id="timer-mode" style="padding: 5px;">
-                    <option value="free">자유 타이머</option>
-                    <option value="pomodoro">포모도로 (25분/5분)</option>
-                </select>
-            </div>
-            <button class="ctrl-btn" style="padding: 12px 30px; font-size:16px;" onclick="toggleTimer()" id="timer-btn">시작</button>
-            <button class="ctrl-btn" style="padding: 12px 20px; font-size:16px;" onclick="resetTimer()">리셋</button>
+    <!-- 월간 달력 패널 (이전/다음 달 이동 및 연월 갱신) -->
+    <div id="panel-calendar" class="panel">
+        <div class="calendar-header">
+            <button class="btn" onclick="changeMonth(-1)">이전 달</button>
+            <span id="calendar-title">2026년 7월</span>
+            <button class="btn" onclick="changeMonth(1)">다음 달</button>
         </div>
-    </div>
-
-    <!-- 월간 달력 탭 -->
-    <div id="tab-calendar" class="tab-content">
-        <div class="content-box">
-            <h3>월간 플래너 (미래/과거 미리 작성)</h3>
-            <div style="padding: 40px; text-align: center; opacity: 0.7;">직사각형 달력 그리드 영역</div>
+        <div class="calendar-grid" id="calendar-grid">
+            <!-- 요일 및 날짜 그리드가 자바스크립트로 동적 생성됨 -->
         </div>
-    </div>
-
-    <!-- 통계 탭 -->
-    <div id="tab-stats" class="tab-content">
-        <div class="content-box">
-            <h3>학습 통계</h3>
-            <div style="display: flex; gap: 20px; align-items: center; margin-top: 15px;">
-                <div style="width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#4a5851 0deg 220deg, #8fa399 220deg 360deg); border: 2px solid var(--main-border);"></div>
-                <div>
-                    <p><b>과목별 분포 비율</b></p>
-                    <p style="font-size: 13px;">국어 60% / 수학 40%</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 설정 탭 -->
-    <div id="tab-settings" class="tab-content">
-        <div class="content-box">
-            <h3>앱 환경 설정</h3>
-            <div style="margin-bottom: 15px;">
-                <label><b>테마 선택:</b></label><br>
-                <button class="ctrl-btn" onclick="setTheme('mint')">연한민트</button>
-                <button class="ctrl-btn" onclick="setTheme('pink')">연분홍</button>
-                <button class="ctrl-btn" onclick="setTheme('brown')">갈색</button>
-                <button class="ctrl-btn" onclick="setTheme('mute')">뮤트초록</button>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label><b>폰트 선택:</b></label><br>
-                <button class="ctrl-btn" onclick="setFont('gothic')">기본고딕</button>
-                <button class="ctrl-btn" onclick="setFont('pixel')">픽셀</button>
-                <button class="ctrl-btn" onclick="setFont('round')">둥근느낌</button>
-                <button class="ctrl-btn" onclick="setFont('bold')">볼드체</button>
-            </div>
-            <div>
-                <label><b>디데이 설정:</b> <input type="date" id="dday-input" onchange="updateDDay()"></label>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 칭호/메달 모달 -->
-<div class="modal" id="badge-modal">
-    <div class="modal-body">
-        <h3>🏆 칭호 및 메달 보관함</h3>
-        <p style="text-align: left; font-size: 13px; line-height: 1.6;">
-            <b>보유 칭호:</b> #참을성 갑🪽, #출석의 달인🫰🏻<br>
-            <b>보유 메달:</b> [IRON🔨], [BRONZE🤎]
-        </p>
-        <button class="ctrl-btn" onclick="closeModal('badge-modal')">닫기</button>
     </div>
 </div>
 
 <script>
-    let studySeconds = 0;
-    let timerRunning = false;
-    let timerObj = null;
+    // --- [데이터 상태 관리] ---
+    let totalSeconds = 0;
+    let attendanceDays = 1;
+    let success100Days = 1; // 100% 달성 누적 일수
+    let isRunning = false;
+    let timerInterval = null;
+    let lastTimestamp = Date.now();
+
     let todos = [];
-    let currentDate = new Date(2026, 6, 23);
 
-    function switchTab(name) {
+    // 달력 관리용 날짜 객체
+    let currentCalDate = new Date(2026, 6, 23); // 2026년 7월 기준
+
+    // --- [백그라운드 타이머 로직 (Date.now 시간차 계산)] ---
+    function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        lastTimestamp = Date.now();
+        timerInterval = setInterval(() => {
+            const now = Date.now();
+            const diffSeconds = Math.floor((now - lastTimestamp) / 1000);
+            if (diffSeconds > 0) {
+                totalSeconds += diffSeconds;
+                lastTimestamp = now;
+                updateUI();
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        isRunning = false;
+        clearInterval(timerInterval);
+    }
+
+    function addTestTime() {
+        totalSeconds += 3600; // 테스트용 1시간 추가
+        updateUI();
+    }
+
+    function formatTime(totalSec) {
+        const hrs = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+        const secs = String(totalSec % 60).padStart(2, '0');
+        return `${hrs}:${mins}:${secs}`;
+    }
+
+    // --- [칭호 및 메달 계산 로직] ---
+    function updateAchievements() {
+        const hours = totalSeconds / 3600;
+        let titles = [];
+
+        // 칭호 로직 (복수 획득 가능)
+        if (hours >= 100 && attendanceDays >= 100) titles.push('#GOAT');
+        else if (hours >= 100) titles.push('#참을성 갑');
+
+        if (hours >= 500 && attendanceDays >= 365) titles.push('#CHALLENGER');
+        else if (hours >= 500) titles.push('#시간도둑');
+
+        if (attendanceDays >= 365) titles.push('#광인');
+        else if (attendanceDays >= 100) titles.push('#출석의 달인');
+
+        document.getElementById('stat-titles').innerText = titles.length > 0 ? titles.join(', ') : '없음';
+        document.getElementById('stat-hours').innerText = `${Math.floor(hours)}시간`;
+        document.getElementById('stat-attendance').innerText = `${attendanceDays}일`;
+
+        // 포우 5단계 색상 진화 (시간 기준)
+        const pouBox = document.getElementById('pou-box');
+        pouBox.className = 'pou-silhouette';
+        if (hours >= 500) pouBox.classList.add('pou-level-4'); // 금색
+        else if (hours >= 100) pouBox.classList.add('pou-level-3'); // 은색
+        else if (hours >= 50) pouBox.classList.add('pou-level-2'); // 흰색
+        else if (hours >= 10) pouBox.classList.add('pou-level-1'); // 회색
+        else pouBox.classList.add('pou-level-0'); // 검정
+
+        // 메달 로직 (최고 단계 하나만 갱신)
+        let medal = 'IRON';
+        if (success100Days >= 150) medal = 'CHALLENGER';
+        else if (success100Days >= 100) medal = 'GRANDMASTER';
+        else if (success100Days >= 75) medal = 'MASTER';
+        else if (success100Days >= 50) medal = 'DIAMOND';
+        else if (success100Days >= 30) medal = 'EMERALD';
+        else if (success100Days >= 15) medal = 'PLATINUM';
+        else if (success100Days >= 7) medal = 'GOLD';
+        else if (success100Days >= 5) medal = 'SILVER';
+        else if (success100Days >= 3) medal = 'BRONZE';
+
+        document.getElementById('stat-medal').innerText = medal;
+        document.getElementById('pou-badge-name').innerText = `[${medal}] 아기 포우`;
+    }
+
+    function updateUI() {
+        document.getElementById('timer-display').innerText = formatTime(totalSeconds);
+        updateAchievements();
+    }
+
+    // --- [탭 전환 기능] ---
+    function switchTab(tabName) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('tab-' + name).classList.add('active');
-    }
-
-    function setTheme(theme) {
-        document.body.className = document.body.className.replace(/theme-\w+/, 'theme-' + theme);
-    }
-
-    function setFont(font) {
-        document.body.className = document.body.className.replace(/font-\w+/, 'font-' + font);
-    }
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    function changeDate(days) {
-        currentDate.setDate(currentDate.getDate() + days);
-        let y = currentDate.getFullYear();
-        let m = String(currentDate.getMonth() + 1).padStart(2, '0');
-        let d = String(currentDate.getDate()).padStart(2, '0');
-        document.getElementById('current-planner-date').innerText = `${y}.${m}.${d}`;
-    }
-
-    function toggleTimer() {
-        if(!timerRunning) {
-            timerObj = setInterval(() => {
-                studySeconds++;
-                updateTimerUI();
-            }, 1000);
-            document.getElementById('timer-btn').innerText = '일시정지';
+        
+        if (tabName === 'todo') {
+            document.getElementById('panel-todo').classList.add('active');
+            event.target.classList.add('active');
         } else {
-            clearInterval(timerObj);
-            document.getElementById('timer-btn').innerText = '시작';
+            document.getElementById('panel-calendar').classList.add('active');
+            event.target.classList.add('active');
+            renderCalendar();
         }
-        timerRunning = !timerRunning;
     }
 
-    function resetTimer() {
-        clearInterval(timerObj);
-        studySeconds = 0;
-        timerRunning = false;
-        document.getElementById('timer-btn').innerText = '시작';
-        updateTimerUI();
-    }
-
-    function updateTimerUI() {
-        let h = Math.floor(studySeconds / 3600);
-        let m = Math.floor((studySeconds % 3600) / 60);
-        let s = studySeconds % 60;
-        document.getElementById('timer-screen').innerText = 
-            `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        document.getElementById('total-time').innerText = h + '시간';
-
-        let exprs = ['😠', '😅', '😉', '☺️', '😚', '🥰', '🥹', '🫪'];
-        let idx = h > 7 ? 7 : h;
-        document.getElementById('pou-face-expression').innerText = exprs[idx];
-    }
-
+    // --- [체크리스트 및 삭제 기능] ---
     function addTodo() {
-        let subject = document.getElementById('subject-select').value;
-        let text = document.getElementById('todo-input-text').value;
-        if(!text) return;
-        todos.push({subject, text, done: false});
-        document.getElementById('todo-input-text').value = '';
+        const input = document.getElementById('todo-input');
+        const text = input.value.trim();
+        if (!text) return;
+        todos.push(text);
+        input.value = '';
         renderTodos();
     }
 
-    function toggleTodo(i) {
-        todos[i].done = !todos[i].done;
-        todos.sort((a, b) => a.done - b.done);
+    function deleteTodo(index) {
+        todos.splice(index, 1);
         renderTodos();
     }
 
     function renderTodos() {
-        let container = document.getElementById('todo-list-container');
-        container.innerHTML = '';
-        let doneCnt = 0;
-        todos.forEach((t, i) => {
-            if(t.done) doneCnt++;
-            container.innerHTML += `
-                <div class="todo-item ${t.done ? 'done' : ''}">
-                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${i})">
-                    <b>[${t.subject}]</b>
-                    <span>${t.text}</span>
-                </div>
-            `;
+        const list = document.getElementById('todo-list');
+        list.innerHTML = '';
+        todos.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'todo-item';
+            li.innerHTML = `<span>${item}</span> <button class="delete-btn" onclick="deleteTodo(${index})">삭제</button>`;
+            list.appendChild(li);
         });
-        let rate = todos.length === 0 ? 0 : Math.round((doneCnt / todos.length) * 100);
-        document.getElementById('achievement-rate').innerText = rate + '%';
     }
 
-    function updateDDay() {
-        let val = document.getElementById('dday-input').value;
-        if(!val) return;
-        let diff = Math.ceil((new Date(val) - new Date()) / (1000*60*60*24));
-        document.getElementById('d-day-view').innerText = diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
+    // --- [월간 캘린더 (이전/다음 달 이동 및 연월 갱신)] ---
+    fn_days = ['일', '월', '화', '수', '목', '금', '토'];
+
+    function changeMonth(direction) {
+        currentCalDate.setMonth(currentCalDate.getMonth() + direction);
+        renderCalendar();
     }
+
+    function renderCalendar() {
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+        
+        document.getElementById('calendar-title').innerText = `${year}년 ${month + 1}월`;
+
+        const grid = document.getElementById('calendar-grid');
+        grid.innerHTML = '';
+
+        // 요일 헤더 생성
+        fn_days.forEach(day => {
+            const div = document.createElement('div');
+            div.className = 'calendar-day-name';
+            div.innerText = day;
+            grid.appendChild(div);
+        });
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        // 빈 칸 채우기 (월 시작 요일 맞춤)
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyDiv = document.createElement('div');
+            grid.appendChild(emptyDiv);
+        }
+
+        // 날짜 칸 채우기
+        for (let d = 1; d <= totalDays; d++) {
+            const dateBox = document.createElement('div');
+            dateBox.className = 'calendar-date-box';
+            dateBox.innerHTML = `<div class="date-num">${d}</div>`;
+            grid.appendChild(dateBox);
+        }
+    }
+
+    // 초기 실행
+    updateUI();
+    renderCalendar();
 </script>
+
 </body>
 </html>
+
